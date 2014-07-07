@@ -2,5 +2,8 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>MyItem.qml</file>
+        <file>Water.qml</file>
+        <file>flexibleLoader.qml</file>
+        <file>mainMenu.qml</file>
     </qresource>
 </RCC>

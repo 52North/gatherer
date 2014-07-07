@@ -2,10 +2,25 @@ import QtQuick 2.0
 import QtQuick.Controls 1.1
 
 ApplicationWindow {
+    id: mainApp
     visible: true
-    width: 640
-    height: 480
+    width: 384
+    height: 640
     title: qsTr("Hello World")
+
+    Loader{id:window}
+        signal handlerLoader(string name, int index)
+        Loader {
+            id:pageLoader
+            source:"mainMenu.qml"
+        }
+        Connections {
+            target:pageLoader.item
+            onHandlerLoader:{pageLoader.source=name;
+                if(index===2)
+                    window.source="NewWindow.qml";
+            }
+        }
 
     menuBar: MenuBar {
         Menu {
@@ -21,26 +36,5 @@ ApplicationWindow {
         }
     }
 
-    Column {
-            anchors.centerIn: parent
-            spacing: parent.width / 6
 
-            Button {
-                id: hospitalButton
-
-                text: "Hospital"
-                onClicked: console.log(hospitalButton.text + " clicked")
-            }
-            Button {
-                id: savanneButton
-                text: "Savanne"
-                onClicked: console.log(savanneButton.text + " clicked")
-            }
-            Button {
-                id: exitButton
-                text: "Water-Quality"
-
-                onClicked: Qt.quit()
-            }
-        }
 }
