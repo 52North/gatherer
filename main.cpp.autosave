@@ -3,7 +3,6 @@
 #include <QtQml>
 #include <QQmlComponent>
 #include <QQmlContext>
-#include 
 
 #include "message.h"
 #include "dataobject.h"

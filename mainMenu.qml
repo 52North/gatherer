@@ -3,32 +3,36 @@ import QtQuick.Controls 1.1
 
 Rectangle {
     id:top
-        width: 384
-        height:640
+        width:768
+        height:1030
         signal handlerLoader(string name, int index)
 
 
 
   Column {
           anchors.centerIn: parent
-          spacing: parent.width / 6
+          spacing: parent.width / 10
 
           Button {
-              id: hospitalButton
-              width: 200
-              height: 50
+              id: continueButton
+              width: 600
+              height: 150
 
-              text: "Water access points"
-              onClicked: handlerLoader("Water.qml",0)
+              text: "Continue with last template"
+              onClicked: handlerLoader("Template_Water.qml",0)
           }
           Button {
-              id: savanneButton
-              text: "Animal observations"
-              onClicked: console.log(savanneButton.text + " clicked")
+              id: selectTemplateButton
+              width: 600
+              height: 150
+              text: "Select template"
+              onClicked: handlerLoader("SelectTemplate.qml",0)
           }
           Button {
-              id: healthButton
-              text: "Health risks"
+              id: downloadButton
+              width: 600
+              height: 150
+              text: "Download template"
 
               onClicked: console.log(healthButton.text + " clicked")
           }

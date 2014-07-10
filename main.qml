@@ -1,14 +1,15 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.1
 
-ApplicationWindow {
+
+Rectangle {
     id: mainApp
     visible: true
-    width: 384
-    height: 640
-    title: qsTr("Hello World")
+    width: 768
+    height: 1030
+   // title: qsTr("Hello World")
 
-    Loader{id:window}
+
         signal handlerLoader(string name, int index)
         Loader {
             id:pageLoader
@@ -22,7 +23,7 @@ ApplicationWindow {
             }
         }
 
-    menuBar: MenuBar {
+   /* menuBar: MenuBar {
         Menu {
             title: qsTr("File")
             MenuItem {
@@ -34,7 +35,7 @@ ApplicationWindow {
                 onTriggered: Qt.quit();
             }
         }
-    }
+    }*/
 
 
 }
