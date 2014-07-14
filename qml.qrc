@@ -1,9 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>MyItem.qml</file>
         <file>Template_water.qml</file>
-        <file>flexibleLoader.qml</file>
         <file>mainMenu.qml</file>
         <file>SelectTemplate.qml</file>
         <file>Template_animal.qml</file>

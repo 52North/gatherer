@@ -24,12 +24,12 @@ int main(int argc, char *argv[])
 */
 
     QAndroidJniObject mediaDir = QAndroidJniObject::callStaticObjectMethod("android/os/Environment", "getFilesDir", "()Ljava/io/File;");
-    /*QAndroidJniObject mediaPath = mediaDir.callObjectMethod("getAbsolutePath", "()Ljava/lang/String;" );
+    //QAndroidJniObject mediaPath = mediaDir.callObjectMethod("getAbsolutePath", "()Ljava/lang/String;" );
     QAndroidJniEnvironment env;
     if (env->ExceptionCheck()) {
             // Handle exception here.
             env->ExceptionClear();
-    }*/
+    }
 
     //QStringList nameFilter("Template_*.qml");
 

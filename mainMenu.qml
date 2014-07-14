@@ -19,7 +19,7 @@ Rectangle {
               height: 150
 
               text: "Continue with last template"
-              onClicked: handlerLoader("Template_Water.qml",0)
+              onClicked: handlerLoader("Template_water.qml",0)
           }
           Button {
               id: selectTemplateButton

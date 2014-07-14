@@ -11,93 +11,232 @@ Rectangle {id:page1Container
     Text{
         y: 50
         anchors.centerIn: parent
-        text:"Water access points"
+        text:"WaterM Point Mapping"
         font.pointSize: 30
         anchors.verticalCenterOffset: -457
         anchors.horizontalCenterOffset: 0
     }
 
-   Button{
+    Button{
         id:buttonCancelWater
         x: 474
         y: 891
         text: "cancel"
         anchors.rightMargin: 219
         anchors.bottomMargin: 116
-     //Position the button in page1Container rectangle
-            anchors.bottom:page1Container.bottom;
-            anchors.right: page1Container.right
+        //Position the button in page1Container rectangle
+        anchors.bottom:page1Container.bottom;
+        anchors.right: page1Container.right
 
-                    onClicked: {
-                        handlerLoader("mainMenu.qml",0)
-                    }
+        onClicked: {
+            handlerLoader("mainMenu.qml",0)
+        }
 
-     }
+    }
 
-   Button{
+    Button{
         id:buttonSaveWater
         x: 224
         y: 891
         text: "save"
         anchors.rightMargin: 469
         anchors.bottomMargin: 116
-     //Position the button in page1Container rectangle
-            anchors.bottom:page1Container.bottom;
-            anchors.right: page1Container.right
+        //Position the button in page1Container rectangle
+        anchors.bottom:page1Container.bottom;
+        anchors.right: page1Container.right
 
-                    onClicked: {
-                        handlerLoader("mainMenu.qml",0)
+        onClicked: {
+            handlerLoader("mainMenu.qml",0)
+        }
+
+    }
+
+    Rectangle {
+        x: 500
+        y: 200
+        width: 150
+        height: 30
+        color: "white"
+        TextInput {
+            id: textInputColor
+            anchors.fill:parent
+            text: qsTr("")
+            inputMask: qsTr("")
+            font.pixelSize: 25
+        }
+    }
+
+    Text {
+        id: textColor
+        x: 100
+        y: 200
+        text: qsTr("Water point name")
+        font.pixelSize: 25
+    }
+    Rectangle {
+        x: 500
+        y: 300
+        width: 150
+        height: 30
+        color: "white"
+        TextInput {
+            id: textInputMaintenance
+            anchors.fill:parent
+            width: 80
+            height: 20
+            text: qsTr("")
+            font.pixelSize: 25
+
+        }}
+
+    Text {
+        id: textMaintenance
+        x: 100
+        y: 300
+        text: qsTr("Type of maintenance needed")
+        font.pixelSize: 25
+    }
+
+        Rectangle {
+            x: 500
+            y: 400
+            width: 150
+            height: 30
+            color: "white"
+            TextInput {
+                id: textInputMaterials
+                anchors.fill:parent
+                width: 80
+                height: 20
+                text: qsTr("")
+                font.pixelSize: 25
+
+            }}
+
+        Text {
+            id: textMaterials
+            x: 100
+            y: 400
+            text: qsTr("Proposed repair materials")
+            font.pixelSize: 25
+        }
+
+        Rectangle {
+            width:200;
+            height: 50;
+            x: 500
+            y: 500
+
+            Rectangle {
+                    id:comboBox
+                    property variant items: ["Clear", "Semi-dirty", "Dirty"]
+                    property alias selectedItem: chosenItemText.text;
+                    property alias selectedIndex: listView.currentIndex;
+                    signal comboClicked;
+                    width: 200;
+                    height: 50;
+                    z: 100;
+                    smooth:true;
+
+                    Rectangle {
+                        id:chosenItem
+                        radius:4;
+                        width:parent.width;
+                        height:comboBox.height;
+                        color: "lightsteelblue"
+                        smooth:true;
+                        Text {
+                            anchors.top: parent.top;
+                            anchors.left: parent.left;
+                            anchors.margins: 8;
+                            id:chosenItemText
+                            text:comboBox.items[0];
+                            font.family: "Arial"
+                            font.pointSize: 12;
+                            smooth:true
+                        }
+
+                        MouseArea {
+                            anchors.fill: parent;
+                            onClicked: {
+                                comboBox.state = comboBox.state==="dropDown"?"":"dropDown"
+                            }
+                        }
                     }
 
-     }
+                    Rectangle {
+                        id:dropDown
+                        width:comboBox.width;
+                        height:0;
+                        clip:true;
+                        radius:4;
+                        anchors.top: chosenItem.bottom;
+                        anchors.margins: 2;
+                        color: "lightgray"
 
-   Rectangle {
-       x: 386
-       y: 192
-       width: 150
-       height: 30
-       color: "white"
-     TextInput {
-         id: textInputColor
-        anchors.fill:parent
-         text: qsTr("")
-         inputMask: qsTr("")
-         font.pixelSize: 25
-     }
-   }
+                        ListView {
+                            id:listView
+                            height:1000;
+                            model: comboBox.items
+                            currentIndex: 0
+                            delegate: Item{
+                                width:comboBox.width;
+                                height: comboBox.height;
 
-     Text {
-         id: textColor
-         x: 108
-         y: 192
-         text: qsTr("Water color")
-         font.pixelSize: 25
-    }
-     Rectangle {
-         x: 386
-         y: 301
-         width: 150
-         height: 30
-         color: "white"
-     TextInput {
-         id: textInputMaintenance
-         anchors.fill:parent
-        width: 80
-         height: 20
-         text: qsTr("")
-         font.pixelSize: 25
+                                Text {
+                                    text: modelData
+                                    anchors.top: parent.top;
+                                    anchors.left: parent.left;
+                                    anchors.margins: 5;
 
-     }}
+                                }
+                                MouseArea {
+                                    anchors.fill: parent;
+                                    onClicked: {
+                                        comboBox.state = ""
+                                        var prevSelection = chosenItemText.text
+                                        chosenItemText.text = modelData
+                                        if(chosenItemText.text != prevSelection){
+                                            comboBox.comboClicked();
+                                        }
+                                        listView.currentIndex = index;
+                                    }
+                                }
+                            }
+                        }
+                    }
 
-     Text {
-         id: textMaintenance
-         x: 108
-         y: 301
-         text: qsTr("Type of maintenance")
-         font.pixelSize: 25
-     }
+                    Component {
+                        id: highlight
+                        Rectangle {
+                            width:comboBox.width;
+                            height:comboBox.height;
+                            color: "red";
+                            radius: 4
+                        }
+                    }
 
-    /* FocusScope {
+                    states: State {
+                        name: "dropDown";
+                        PropertyChanges { target: dropDown; height:40*comboBox.items.length }
+                    }
+
+                    transitions: Transition {
+                        NumberAnimation { target: dropDown; properties: "height"; easing.type: Easing.OutExpo; duration: 1000 }
+                    }
+                }
+            }
+
+
+        Text {
+            id: textWaterColor
+            x: 100
+            y: 500
+            text: qsTr("Water color")
+            font.pixelSize: 25
+        }
+
+        /* FocusScope {
          id: focusScope;
          width: 400;
          height: textInput.paintedHeight + (2 * textInput.anchors.topMargin);
@@ -183,4 +322,4 @@ Rectangle {id:page1Container
              }
          }
      }*/
-}
+    }
