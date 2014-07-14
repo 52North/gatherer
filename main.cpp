@@ -23,18 +23,24 @@ int main(int argc, char *argv[])
     view.show();
 */
 
-    QAndroidJniObject mediaDir = QAndroidJniObject::callStaticObjectMethod("android/os/Environment", "getFilesDir", "()Ljava/io/File;");
-    //QAndroidJniObject mediaPath = mediaDir.callObjectMethod("getAbsolutePath", "()Ljava/lang/String;" );
-    QAndroidJniEnvironment env;
-    if (env->ExceptionCheck()) {
-            // Handle exception here.
-            env->ExceptionClear();
-    }
+    //QDir::currentPath();
 
-    //QStringList nameFilter("Template_*.qml");
+   // QString dataValue = QDir::currentPath().toString();
+     qDebug() << QDir::currentPath();
 
-    QString dataValue = mediaDir.toString();
-     qDebug() << dataValue;
+     QStringList nameFilter("*.qml");
+     QDir directory(QDir::currentPath());
+     QStringList qmlFiles = directory.entryList();
+     for (int i = 0; i < qmlFiles.size(); ++i)
+               qDebug() << qmlFiles.at(i);
+
+     QDirIterator dirIt("/storage/emulated/0/Download/",QDirIterator::Subdirectories);
+     while (dirIt.hasNext()) {
+         dirIt.next();
+         if (QFileInfo(dirIt.filePath()).isFile())
+             if (QFileInfo(dirIt.filePath()).suffix() == "qml")
+                 qDebug()<<dirIt.filePath();
+     }
 
     /*QDirIterator dirIt("qrc:",QDirIterator::Subdirectories);
     while (dirIt.hasNext()) {
@@ -46,6 +52,7 @@ int main(int argc, char *argv[])
     QList<QObject*> dataList;
     dataList.append(new DataObject("Water access points", "Template_water.qml"));
     dataList.append(new DataObject("Animal observation", "Template_animal.qml"));
+    dataList.append(new DataObject("WaterM Point Mapping", "/storage/emulated/0/Download/Template_water.qml"));
 
     QQuickView view;
     view.setResizeMode(QQuickView::SizeRootObjectToView);

@@ -7,7 +7,6 @@ Rectangle {
     visible: true
     width: 768
     height: 1030
-   // title: qsTr("Hello World")
 
 
         signal handlerLoader(string name, int index)

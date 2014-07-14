@@ -54,7 +54,7 @@ Rectangle {id:page1Container
     Rectangle {
         x: 500
         y: 200
-        width: 150
+        width: 200
         height: 30
         color: "white"
         TextInput {
@@ -76,7 +76,7 @@ Rectangle {id:page1Container
     Rectangle {
         x: 500
         y: 300
-        width: 150
+        width: 200
         height: 30
         color: "white"
         TextInput {
@@ -100,7 +100,7 @@ Rectangle {id:page1Container
         Rectangle {
             x: 500
             y: 400
-            width: 150
+            width: 200
             height: 30
             color: "white"
             TextInput {
@@ -135,7 +135,7 @@ Rectangle {id:page1Container
                     signal comboClicked;
                     width: 200;
                     height: 50;
-                    z: 100;
+                    z: 150;
                     smooth:true;
 
                     Rectangle {
@@ -188,6 +188,8 @@ Rectangle {id:page1Container
                                     anchors.top: parent.top;
                                     anchors.left: parent.left;
                                     anchors.margins: 5;
+                                    font.family: "Arial"
+                                    font.pointSize: 12;
 
                                 }
                                 MouseArea {
@@ -218,7 +220,7 @@ Rectangle {id:page1Container
 
                     states: State {
                         name: "dropDown";
-                        PropertyChanges { target: dropDown; height:40*comboBox.items.length }
+                        PropertyChanges { target: dropDown; height:50*comboBox.items.length }
                     }
 
                     transitions: Transition {
