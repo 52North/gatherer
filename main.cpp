@@ -3,19 +3,21 @@
 #include <QtQml>
 #include <QQmlComponent>
 #include <QQmlContext>
-#include <QtAndroidExtras>
+
+#include <string>
+#include <fstream>
+#include <streambuf>
 
 #include "message.h"
 #include "dataobject.h"
+#include "downloadtemplate.h"
 
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
 
-/*    QQmlApplicationEngine engine;
-
-    qmlRegisterType<Message>("Messages", 1, 0, "Message");
+    /*qmlRegisterType<Message>("Messages", 1, 0, "Message");
 
     QQuickView view;
     view.setResizeMode(QQuickView::SizeRootObjectToView);
@@ -23,42 +25,19 @@ int main(int argc, char *argv[])
     view.show();
 */
 
-    //QDir::currentPath();
 
-   // QString dataValue = QDir::currentPath().toString();
-     qDebug() << QDir::currentPath();
-
-     QStringList nameFilter("*.qml");
-     QDir directory(QDir::currentPath());
-     QStringList qmlFiles = directory.entryList();
-     for (int i = 0; i < qmlFiles.size(); ++i)
-               qDebug() << qmlFiles.at(i);
-
-     QDirIterator dirIt("/storage/emulated/0/Download/",QDirIterator::Subdirectories);
-     while (dirIt.hasNext()) {
-         dirIt.next();
-         if (QFileInfo(dirIt.filePath()).isFile())
-             if (QFileInfo(dirIt.filePath()).suffix() == "qml")
-                 qDebug()<<dirIt.filePath();
-     }
-
-    /*QDirIterator dirIt("qrc:",QDirIterator::Subdirectories);
-    while (dirIt.hasNext()) {
-        dirIt.next();
-        if (QFileInfo(dirIt.filePath()).isFile())
-            if (QFileInfo(dirIt.filePath()).suffix() == "qml")
-                qDebug()<<dirIt.filePath();
-    }*/
-    QList<QObject*> dataList;
-    dataList.append(new DataObject("Water access points", "Template_water.qml"));
-    dataList.append(new DataObject("Animal observation", "Template_animal.qml"));
-    dataList.append(new DataObject("WaterM Point Mapping", "/storage/emulated/0/Download/Template_water.qml"));
+    qDebug() << QDir::currentPath();
 
     QQuickView view;
     view.setResizeMode(QQuickView::SizeRootObjectToView);
     QQmlContext *ctxt = view.rootContext();
-    ctxt->setContextProperty("myModel", QVariant::fromValue(dataList));
-//![0]
+    qmlRegisterType<DownloadTemplate>("DownloadTemplate",1,0,"DownloadTemplate");
+    qmlRegisterType<DataObject>("DataObject",1,0,"DataObject");
+    DownloadTemplate downloadTemplate;
+    ctxt->setContextProperty("downloadtemplate", &downloadTemplate);
+    //![0]
+
+
 
     view.setSource(QUrl("qrc:main.qml"));
     view.show();

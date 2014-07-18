@@ -6,5 +6,6 @@
         <file>SelectTemplate.qml</file>
         <file>Template_animal.qml</file>
         <file>Water.qml</file>
+        <file>DownloadTemplate.qml</file>
     </qresource>
 </RCC>

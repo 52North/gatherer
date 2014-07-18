@@ -1,10 +1,12 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.1
+import DataObject 1.0
 
 Rectangle {
     id:top
         width:768
         height:1030
+        color: "#d4d4d4"
         signal handlerLoader(string name, int index)
 
 
@@ -14,7 +16,7 @@ Rectangle {
             y: 182
             width: 300; height: 500
 
-            model: myModel
+            model: downloadtemplate.model
             delegate: Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
                 height: 100

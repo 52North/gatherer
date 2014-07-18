@@ -5,6 +5,7 @@ Rectangle {
     id:top
         width:768
         height:1030
+        color: "#d4d4d4"
         signal handlerLoader(string name, int index)
 
 
@@ -34,7 +35,7 @@ Rectangle {
               height: 150
               text: "Download template"
 
-              onClicked: console.log(healthButton.text + " clicked")
+              onClicked: handlerLoader("DownloadTemplate.qml",0)
           }
       }
 }

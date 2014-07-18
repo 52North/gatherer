@@ -1,13 +1,15 @@
 TEMPLATE = app
 
 QT += qml quick widgets
-QT += quick androidextras
+QT += quick
 
 HEADERS += message.h \
-    dataobject.h
+    dataobject.h \
+    downloadtemplate.h
 
 SOURCES += main.cpp \
-    dataobject.cpp
+    dataobject.cpp \
+    downloadtemplate.cpp
 
 RESOURCES += qml.qrc
 
