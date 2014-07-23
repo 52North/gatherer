@@ -8,6 +8,9 @@
 #include <fstream>
 #include <streambuf>
 
+#include "qtquickcontrolsapplication.h"
+#include <QtQml/QQmlApplicationEngine>
+
 #include "message.h"
 #include "dataobject.h"
 #include "downloadtemplate.h"
@@ -15,7 +18,7 @@
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
+    //QGuiApplication app(argc, argv);
 
     /*qmlRegisterType<Message>("Messages", 1, 0, "Message");
 
@@ -25,12 +28,15 @@ int main(int argc, char *argv[])
     view.show();
 */
 
+    QtQuickControlsApplication app(argc, argv);
+    QQmlApplicationEngine engine(QUrl("qrc:/main.qml"));
+
 
     qDebug() << QDir::currentPath();
 
-    QQuickView view;
-    view.setResizeMode(QQuickView::SizeRootObjectToView);
-    QQmlContext *ctxt = view.rootContext();
+    //QQuickView view;
+   // view.setResizeMode(QQuickView::SizeRootObjectToView);
+    QQmlContext *ctxt = engine.rootContext();
     qmlRegisterType<DownloadTemplate>("DownloadTemplate",1,0,"DownloadTemplate");
     qmlRegisterType<DataObject>("DataObject",1,0,"DataObject");
     DownloadTemplate downloadTemplate;
@@ -39,8 +45,8 @@ int main(int argc, char *argv[])
 
 
 
-    view.setSource(QUrl("qrc:main.qml"));
-    view.show();
+    //view.setSource(QUrl("qrc:main.qml"));
+    //view.show();
 
     //engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
     return app.exec();

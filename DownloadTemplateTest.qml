@@ -16,7 +16,7 @@ Rectangle {
             y: 182
             width: 300; height: 500
 
-            model: downloadtemplate.model
+            model: downloadtemplate.subjectsModel
             delegate: Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
                 height: 100
@@ -32,7 +32,8 @@ Rectangle {
                     id: mousearea2
                     anchors.fill: parent
                     onClicked: {
-                        handlerLoader(model.modelData.color,0)
+                        downloadtemplate.downloadFromUrl(model.modelData.name)
+                        handlerLoader("mainMenu.qml",0)
                     }
                 }
             }
@@ -50,7 +51,7 @@ Rectangle {
                  anchors.right: top.right
 
                          onClicked: {
-                             handlerLoader("mainMenu.qml",0)
+                             handlerLoader("DownloadTemplate.qml",0)
                          }
 
           }

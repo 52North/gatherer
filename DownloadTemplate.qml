@@ -9,7 +9,12 @@ Rectangle {
     color: "#d4d4d4"
     signal handlerLoader(string name, int index)
 
-
+    Item {
+         Connections {
+             target: downloadtemplate
+             onResponseReady: handlerLoader("DownloadTemplateTest.qml",0)
+         }
+     }
 
     Column {
         anchors.centerIn: parent
@@ -46,8 +51,8 @@ Rectangle {
             text: "Download from url"
 
             onClicked: {
-                downloadtemplate.downloadFromUrl("LanduseMapping")
-                handlerLoader("mainMenu.qml",0)
+                downloadtemplate.getSubjectList()
+                //handlerLoader("DownloadTemplateTest.qml",0)
             }
         }
     }

@@ -5,12 +5,30 @@
 #include <QDebug>
 #include "dataobject.h"
 #include <QNetworkReply>
+#include <QQuickView>
 
 DownloadTemplate::DownloadTemplate(QObject *parent) :
     QObject(parent)
 {
+    QDirIterator dirIt("/data/data/org.qtproject.example.Gatherer/files/",QDirIterator::Subdirectories);
+    while (dirIt.hasNext()) {
+        dirIt.next();
+        if (QFileInfo(dirIt.filePath()).isFile())
+            if (QFileInfo(dirIt.filePath()).suffix() == "qml"){
+                qDebug()<<dirIt.filePath();
+
+                QString filename= dirIt.filePath();
+                QStringList folders = filename.split( "/" );
+                QStringList nameAndExt = folders[folders.length() - 1].split(".");
+                QString name = nameAndExt[0];
+                m_model.append(new DataObject(name, "file://" + filename));
+
+
+            }
+
+    }/*
     m_model.append(new DataObject("Water access points", "Template_water.qml"));
-    m_model.append(new DataObject("Animal observation", "Template_animal.qml"));
+    m_model.append(new DataObject("Animal observation", "Template_animal.qml"));*/
 
 }
 
@@ -39,7 +57,7 @@ void DownloadTemplate::download(const QString &templateName)
 
                     QStringList metadata = pieces[0].split( "\n" );
                     QString name = metadata[0];
-                    QString filename= "/storage/emulated/0/Download/" + name + ".qml";
+                    QString filename= "/data/data/org.qtproject.example.Gatherer/files/" + name + ".qml";
                     QFile file( filename );
                     if ( file.open(QIODevice::ReadWrite) )
                     {
@@ -61,7 +79,7 @@ void DownloadTemplate::downloadFromUrl(const QString &templateName)
     nam = new QNetworkAccessManager();
     QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
                      this, SLOT(finishedSlot(QNetworkReply*)));
-    QUrl url("http://130.89.222.201:8090/gatherer?template=" + templateName);
+    QUrl url("http://130.89.222.201:8090/gatherer?subject=" + templateName);
     nam->get(QNetworkRequest(url));
 }
 
@@ -77,8 +95,8 @@ void DownloadTemplate::finishedSlot(QNetworkReply *reply)
     //qDebug()<<pieces[1];
 
     QStringList metadata = pieces[0].split( "\n" );
-    QString name = metadata[0];
-    QString filename= "/storage/emulated/0/Download/" + name + ".qml";
+    QString name = metadata[0].trimmed();
+    QString filename= "/data/data/org.qtproject.example.Gatherer/files/" + name + ".qml";
     QFile file( filename );
     if ( file.open(QIODevice::ReadWrite) )
     {
@@ -86,4 +104,34 @@ void DownloadTemplate::finishedSlot(QNetworkReply *reply)
         stream << pieces[1];
     }
     m_model.append(new DataObject(name, "file://" + filename));
+}
+
+void DownloadTemplate::getSubjectList()
+{
+    if ( nam)
+        delete nam;
+
+    nam = new QNetworkAccessManager();
+    QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
+                     this, SLOT(finishedSubjectListSlot(QNetworkReply*)));
+    QUrl url("http://130.89.222.201:8090/gatherer?subjectlist");
+    nam->get(QNetworkRequest(url));
+}
+
+void DownloadTemplate::finishedSubjectListSlot(QNetworkReply *reply)
+{
+    QString content = reply->readAll();
+    QStringList subjects = content.split( ";" );
+    //qDebug()<<pieces[1];
+    m_subjects.clear();
+
+    for (int i=0;i<subjects.length();i++){
+        m_subjects.append(new DataObject(subjects[i], ""));
+    }
+    responseReady();
+}
+
+QQmlListProperty<DataObject> DownloadTemplate::subjectsModel()
+{
+    return QQmlListProperty<DataObject>(this,m_subjects);
 }

@@ -7,5 +7,10 @@
         <file>Template_animal.qml</file>
         <file>Water.qml</file>
         <file>DownloadTemplate.qml</file>
+        <file>toolbar.png</file>
+        <file>content/AndroidDelegate.qml</file>
+        <file>navigation_previous_item.png</file>
+        <file>textinput.png</file>
+        <file>DownloadTemplateTest.qml</file>
     </qresource>
 </RCC>
