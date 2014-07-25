@@ -33,6 +33,7 @@ private:
     QList<DataObject *> m_model;
     QList<DataObject *> m_subjects;
     QNetworkAccessManager* nam = 0;
+    QString m_templateName;
 
 public slots:
     void finishedSlot(QNetworkReply * reply);

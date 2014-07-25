@@ -7,12 +7,12 @@ Rectangle {
     width:768
     height:1030
     color: "#d4d4d4"
-    signal handlerLoader(string name, int index)
+    signal handlerLoader(string name)
 
     Item {
          Connections {
              target: downloadtemplate
-             onResponseReady: handlerLoader("DownloadTemplateTest.qml",0)
+             onResponseReady: handlerLoader("DownloadTemplateTest.qml")
          }
      }
 
@@ -28,7 +28,7 @@ Rectangle {
             text: "Download from download folder"
             onClicked: {
                 downloadtemplate.download("/storage/emulated/0/Download/")
-                handlerLoader("mainMenu.qml",0)
+                handlerLoader("mainMenu.qml")
             }
         }
         Rectangle {
@@ -48,11 +48,11 @@ Rectangle {
             id: downloadButton
             width: 600
             height: 150
-            text: "Download from url"
+            text: "Download from server"
 
             onClicked: {
                 downloadtemplate.getSubjectList()
-                //handlerLoader("DownloadTemplateTest.qml",0)
+                //handlerLoader("DownloadTemplateTest.qml")
             }
         }
     }
@@ -68,7 +68,7 @@ Rectangle {
         anchors.right: parent.right
 
         onClicked: {
-            handlerLoader("mainMenu.qml",0)
+            handlerLoader("mainMenu.qml")
         }
 
     }

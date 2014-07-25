@@ -14,6 +14,8 @@
 #include "message.h"
 #include "dataobject.h"
 #include "downloadtemplate.h"
+#include "currentobservation.h"
+#include "options.h"
 
 
 int main(int argc, char *argv[])
@@ -38,9 +40,15 @@ int main(int argc, char *argv[])
    // view.setResizeMode(QQuickView::SizeRootObjectToView);
     QQmlContext *ctxt = engine.rootContext();
     qmlRegisterType<DownloadTemplate>("DownloadTemplate",1,0,"DownloadTemplate");
+    qmlRegisterType<DownloadTemplate>("CurrentObservation",1,0,"CurrentObservation");
+    qmlRegisterType<DownloadTemplate>("Options",1,0,"Options");
     qmlRegisterType<DataObject>("DataObject",1,0,"DataObject");
     DownloadTemplate downloadTemplate;
+    CurrentObservation currentObservation;
+    Options options;
     ctxt->setContextProperty("downloadtemplate", &downloadTemplate);
+    ctxt->setContextProperty("currentobservation", &currentObservation);
+    ctxt->setContextProperty("options", &options);
     //![0]
 
 

@@ -6,11 +6,15 @@ QT += quick
 HEADERS += message.h \
     dataobject.h \
     downloadtemplate.h \
-    qtquickcontrolsapplication.h
+    qtquickcontrolsapplication.h \
+    currentobservation.h \
+    options.h
 
 SOURCES += main.cpp \
     dataobject.cpp \
-    downloadtemplate.cpp
+    downloadtemplate.cpp \
+    currentobservation.cpp \
+    options.cpp
 
 RESOURCES += qml.qrc
 

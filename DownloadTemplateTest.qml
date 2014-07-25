@@ -7,7 +7,7 @@ Rectangle {
         width:768
         height:1030
         color: "#d4d4d4"
-        signal handlerLoader(string name, int index)
+        signal handlerLoader(string name)
 
 
 
@@ -33,7 +33,7 @@ Rectangle {
                     anchors.fill: parent
                     onClicked: {
                         downloadtemplate.downloadFromUrl(model.modelData.name)
-                        handlerLoader("mainMenu.qml",0)
+                        handlerLoader("mainMenu.qml")
                     }
                 }
             }
@@ -51,7 +51,7 @@ Rectangle {
                  anchors.right: top.right
 
                          onClicked: {
-                             handlerLoader("DownloadTemplate.qml",0)
+                             handlerLoader("DownloadTemplate.qml")
                          }
 
           }

@@ -1,16 +1,19 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>Template_water.qml</file>
+        <file>Template_Water.qml</file>
         <file>mainMenu.qml</file>
         <file>SelectTemplate.qml</file>
-        <file>Template_animal.qml</file>
-        <file>Water.qml</file>
         <file>DownloadTemplate.qml</file>
         <file>toolbar.png</file>
         <file>content/AndroidDelegate.qml</file>
         <file>navigation_previous_item.png</file>
         <file>textinput.png</file>
         <file>DownloadTemplateTest.qml</file>
+        <file>Observation.qml</file>
+        <file>Template_LandUseMapping.qml</file>
+        <file>Template_Cholera.qml</file>
+        <file>Template_Tubercolosis.qml</file>
+        <file>Options.qml</file>
     </qresource>
 </RCC>

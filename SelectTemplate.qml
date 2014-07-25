@@ -7,7 +7,7 @@ Rectangle {
         width:768
         height:1030
         color: "#d4d4d4"
-        signal handlerLoader(string name, int index)
+        signal handlerLoader(string name)
 
 
 
@@ -32,7 +32,9 @@ Rectangle {
                     id: mousearea2
                     anchors.fill: parent
                     onClicked: {
-                        handlerLoader(model.modelData.color,0)
+                        currentobservation.url = model.modelData.color;
+                        //currentobservation.name = model.modelData.name;
+                        handlerLoader("Observation.qml")
                     }
                 }
             }
@@ -50,7 +52,7 @@ Rectangle {
                  anchors.right: top.right
 
                          onClicked: {
-                             handlerLoader("mainMenu.qml",0)
+                             handlerLoader("mainMenu.qml")
                          }
 
           }

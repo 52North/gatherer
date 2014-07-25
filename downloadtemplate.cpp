@@ -26,9 +26,7 @@ DownloadTemplate::DownloadTemplate(QObject *parent) :
 
             }
 
-    }/*
-    m_model.append(new DataObject("Water access points", "Template_water.qml"));
-    m_model.append(new DataObject("Animal observation", "Template_animal.qml"));*/
+    }
 
 }
 
@@ -57,7 +55,7 @@ void DownloadTemplate::download(const QString &templateName)
 
                     QStringList metadata = pieces[0].split( "\n" );
                     QString name = metadata[0];
-                    QString filename= "/data/data/org.qtproject.example.Gatherer/files/" + name + ".qml";
+                    QString filename= "/data/data/org.qtproject.example.Gatherer/files/" + m_templateName + ".qml";
                     QFile file( filename );
                     if ( file.open(QIODevice::ReadWrite) )
                     {
@@ -73,13 +71,14 @@ void DownloadTemplate::download(const QString &templateName)
 
 void DownloadTemplate::downloadFromUrl(const QString &templateName)
 {
+    m_templateName = templateName;
     if ( nam)
         delete nam;
 
     nam = new QNetworkAccessManager();
     QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
                      this, SLOT(finishedSlot(QNetworkReply*)));
-    QUrl url("http://130.89.222.201:8090/gatherer?subject=" + templateName);
+    QUrl url("http://130.89.222.201:8095/gatherer?subject=" + templateName);
     nam->get(QNetworkRequest(url));
 }
 
@@ -96,7 +95,7 @@ void DownloadTemplate::finishedSlot(QNetworkReply *reply)
 
     QStringList metadata = pieces[0].split( "\n" );
     QString name = metadata[0].trimmed();
-    QString filename= "/data/data/org.qtproject.example.Gatherer/files/" + name + ".qml";
+    QString filename= "/data/data/org.qtproject.example.Gatherer/files/" + m_templateName + ".qml";
     QFile file( filename );
     if ( file.open(QIODevice::ReadWrite) )
     {
@@ -114,7 +113,7 @@ void DownloadTemplate::getSubjectList()
     nam = new QNetworkAccessManager();
     QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
                      this, SLOT(finishedSubjectListSlot(QNetworkReply*)));
-    QUrl url("http://130.89.222.201:8090/gatherer?subjectlist");
+    QUrl url("http://130.89.222.201:8095/gatherer?subjectlist");
     nam->get(QNetworkRequest(url));
 }
 
