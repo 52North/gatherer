@@ -75,6 +75,7 @@ Rectangle {id:page1Container
        anchors.right: page1Container.right
 
        onClicked: {
+           currentobservation.uploadSaved();
            handlerLoader("mainMenu.qml")
        }
 
@@ -89,7 +90,7 @@ Rectangle {id:page1Container
            currentobservation.observer = options.observer
            currentobservation.server = options.server
            currentobservation.time = Qt.formatDateTime(new Date(), "yyyy-MM-dd")
-           currentobservation.upload();
+           currentobservation.save();
            handlerLoader("mainMenu.qml")
        }
    }

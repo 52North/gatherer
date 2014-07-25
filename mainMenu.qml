@@ -37,5 +37,13 @@ Rectangle {
 
               onClicked: handlerLoader("DownloadTemplate.qml")
           }
+          Button {
+              id: observationsButton
+              width:600
+              height: 150
+              text: "Saved observations"
+
+              onClicked: handlerLoader("SavedObservations.qml")
+          }
       }
 }

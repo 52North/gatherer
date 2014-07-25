@@ -15,5 +15,6 @@
         <file>Template_Cholera.qml</file>
         <file>Template_Tubercolosis.qml</file>
         <file>Options.qml</file>
+        <file>SavedObservations.qml</file>
     </qresource>
 </RCC>

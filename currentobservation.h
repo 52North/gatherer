@@ -43,6 +43,7 @@ public:
 
     Q_INVOKABLE void upload();
     Q_INVOKABLE void save();
+    Q_INVOKABLE void uploadSaved();
 
 signals:
 

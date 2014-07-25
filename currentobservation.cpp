@@ -102,22 +102,38 @@ void CurrentObservation::upload()
 
 void CurrentObservation::save()
 {
-    QFile saveFile("/data/data/org.qtproject.example.Gatherer/files/savedObservations.txt");
-    bool ret = saveFile.open(QIODevice::ReadOnly | QIODevice::Text);
+    QString filename = "/storage/emulated/0/Download/savedObservations.txt";//"/data/data/org.qtproject.example.Gatherer/files/savedObservations.txt";
+    QFile saveFile(filename);
+    bool ret = saveFile.open(QIODevice::ReadWrite | QIODevice::Text);
+    QString content;
+    if( ret )
+    {
+        QString urlString = m_server + "?subjectobservation&location=" + m_location + "&time=" + m_time + "&subjectname=" + m_name + "&observer=" + m_observer + m_data + "\n";
+        QTextStream stream(&saveFile);
+        content = stream.readAll();
+        stream << urlString;
+    }
+}
+
+void CurrentObservation::uploadSaved()
+{
+    QString filename = "/storage/emulated/0/Download/savedObservations.txt";//"/data/data/org.qtproject.example.Gatherer/files/savedObservations.txt";
+    QFile saveFile(filename);
+    bool ret = saveFile.open(QIODevice::ReadWrite | QIODevice::Text);
     QString content;
     if( ret )
     {
         QTextStream stream(&saveFile);
         content = stream.readAll();
     }
-    QString urlString = "\n" + m_server + "?subjectobservation&location=" + m_location + "&time=" + m_time + "&subjectname=" + m_name + "&observer=" + m_observer + m_data;
 
-    QFile file( filename );
-    if ( file.open(QIODevice::ReadWrite) )
-    {
-        QTextStream stream( &file );
-        stream << content + urlString;
-    }
+    QFile file(filename);
+    file.open(QIODevice::WriteOnly | QIODevice::Truncate);
+//    if( ret )
+//    {
+//        QTextStream stream(&saveFile);
+//        stream << "";
+//    }
 }
 
 void CurrentObservation::finishedUploadSlot(QNetworkReply *reply)
