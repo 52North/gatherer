@@ -58,8 +58,7 @@ Rectangle {id:template
         ListElement { text: "Discontinuous Medium Density" }
         ListElement { text: "Urban Fabric" }
         ListElement { text: "Discontinuous Low Density Urban Fabric" }
-        ListElement { text: "Discontinuous Very Low Density" }
-        ListElement { text: "Urban Fabric" }
+        ListElement { text: "Discontinuous Very Low Density Urban Fabric" }
         ListElement { text: "Isolated Structures" }
         ListElement { text: "Industrial, commercial, public, military and private units" }
         ListElement { text: "Fast transit roads and associated land" }

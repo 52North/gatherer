@@ -41,6 +41,12 @@
 #include <QDebug>
 #include "dataobject.h"
 
+//DataObject::DataObject(const DataObject &other)
+//: name(other.name, color(other.color)
+//{
+
+//}
+
 DataObject::DataObject(QObject *parent)
     : QObject(parent)
 {
@@ -49,6 +55,12 @@ DataObject::DataObject(QObject *parent)
 DataObject::DataObject(const QString &name, const QString &color, QObject *parent)
     : QObject(parent), m_name(name), m_color(color)
 {
+}
+
+DataObject::DataObject(const QString &time, const QString &subjectname, const QString &data, QObject *parent)
+    : QObject(parent), m_time(time), m_subjectname(subjectname), m_data(data)
+{
+
 }
 
 QString DataObject::name() const
@@ -75,5 +87,20 @@ void DataObject::setColor(const QString &color)
         m_color = color;
         emit colorChanged();
     }
+}
+
+QString DataObject::time() const
+{
+    return m_time;
+}
+
+QString DataObject::subjectname() const
+{
+    return m_subjectname;
+}
+
+QString DataObject::data() const
+{
+    return m_data;
 }
 

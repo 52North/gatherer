@@ -70,7 +70,7 @@ ApplicationWindow {
                 onTriggered: pageLoader.source="mainMenu.qml"
             }
             MenuItem {
-                text: qsTr("Options")
+                text: qsTr("Settings")
                 onTriggered: pageLoader.source="Options.qml"
             }
 

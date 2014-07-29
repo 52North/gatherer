@@ -34,7 +34,7 @@ Rectangle {
             x: 300
             y: 200
             width: 400
-            height: 40
+            height: 80
             font.pixelSize: 25
             text: options.server
             MouseArea {
@@ -48,7 +48,7 @@ Rectangle {
         Text {
             id: textField2
             x: 100
-            y: 300
+            y: 400
             text: qsTr("Observer name:")
             font.pixelSize: 25
         }
@@ -58,7 +58,7 @@ Rectangle {
             frameVisible: true
             textFormat: Qt.PlainText
             x: 300
-            y: 300
+            y: 400
             width: 400
             height: 40
             font.pixelSize: 25

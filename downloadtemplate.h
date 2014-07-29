@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QQmlListProperty>
 #include <QNetworkAccessManager>
+#include <QVariantList>
 
 class DataObject;
 class QNetworkReply;
@@ -17,14 +18,18 @@ public:
     ~DownloadTemplate();
 
     Q_INVOKABLE void download(const QString & templateName);
-    Q_INVOKABLE void downloadFromUrl(const QString & templateName);
-    Q_INVOKABLE void getSubjectList();
+    Q_INVOKABLE void downloadFromUrl(const QString & server, const QString & templateName);
+    Q_INVOKABLE void getSubjectList(const QString & server);
+    Q_INVOKABLE QString getUrl(const int & i) const;
+    Q_INVOKABLE QString getSubject(const int & i) const;
+    Q_INVOKABLE QString templateName(const QString & name) const;
 
     QQmlListProperty<DataObject> model();
     QQmlListProperty<DataObject> subjectsModel();
 
     Q_PROPERTY(QQmlListProperty<DataObject> model READ model CONSTANT)
     Q_PROPERTY(QQmlListProperty<DataObject> subjectsModel READ subjectsModel CONSTANT)
+
 
 signals:
     void responseReady();
@@ -34,6 +39,9 @@ private:
     QList<DataObject *> m_subjects;
     QNetworkAccessManager* nam = 0;
     QString m_templateName;
+    QList<QString> m_urls;
+    QStringList m_subjectslist;
+    QHash<QString, QString> m_templateNames;
 
 public slots:
     void finishedSlot(QNetworkReply * reply);

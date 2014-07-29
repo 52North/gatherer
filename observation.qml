@@ -1,117 +1,197 @@
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
+import QtQuick.Dialogs 1.1
 import QtQuick.Controls.Styles 1.1
 import QtPositioning 5.2
 
 Rectangle {id:page1Container
-   width: 768
-   height: 1030
-   color: "#d4d4d4"
-   signal handlerLoader(string name)
+    width: 768
+    height: 1030
+    color: "#d4d4d4"
+    signal handlerLoader(string name)
 
-   Rectangle {
-   width: 768
-   height: 600
-     Loader {
-         id: myLoader
-       source:currentobservation.url; //file:///storage/emulated/0/Download/
-     }
+    MessageDialog {
+        id: messageDialog
+        title: "Observation saved locally"
+        text: "Record another observation?"
+        standardButtons: StandardButton.Yes | StandardButton.No
+        onYes: {
+            myLoader.source = "";
+            myLoader.source = currentobservation.url;
+        }
+        onNo: {
+            handlerLoader("mainMenu.qml")
+        }
 
-   }
+        //Component.onCompleted: visible = true
+    }
+    MessageDialog {
+        id: messageDialogGPS
+        title: "No GPS signal"
+        text: "Turn the GPS on to include the location in the observation"
 
-   PositionSource {
-       id: positionSource
-       updateInterval: 10000
-       active: true
+    }
 
-//        onPositionChanged: {
-//            var coord = positionSource.position.coordinate;
-//            console.log("Coordinate:", coord.longitude, coord.latitude);
-//        }
-   }
+    Rectangle {
+        id: rect
+        width: 768
+        height: 600
+        Loader {
+            id: myLoader
+            source:currentobservation.url; //file:///storage/emulated/0/Download/
+        }
 
-   Text {
-       id: textCoordinates
-       x: 500
-       y: 700
-       text: qsTr(positionSource.position.coordinate.longitude + "\n" + positionSource.position.coordinate.latitude)
-       font.pixelSize: 25
-   }
+    }
 
-   Text {
-       id: textCoordinate
-       x: 100
-       y: 700
-       text: qsTr("Position:")
-       font.pixelSize: 25
-   }
+    PositionSource {
+        id: positionSource
+        updateInterval: 1000
+        active: false
 
-//   Text {
-//       id: textTimeNow
-//       x: 500
-//       y: 700
-//       text: qsTr(Qt.formatDateTime(new Date(), "dd-MM-yy\nhh:mm:ss"))
-//       font.pixelSize: 25
-//   }
+        //        onPositionChanged: {
+        //            var coord = positionSource.position.coordinate;
+        //            console.log("Coordinate:", coord.longitude, coord.latitude);
+        //        }
+    }
 
-//   Text {
-//       id: textTime
-//       x: 100
-//       y: 700
-//       text: qsTr("Date/Time:")
-//       font.pixelSize: 25
-//   }
+    //    Text {
+    //        id: textCoordinates
+    //        x: 500
+    //        y: 700
+    //        text: qsTr(positionSource.position.coordinate.longitude + "\n" + positionSource.position.coordinate.latitude)
+    //        font.pixelSize: 25
+    //    }
 
-   Button{
-       id:buttonCancel
-       x: 474
-       y: 891
-       text: "cancel"
-       anchors.rightMargin: 219
-       anchors.bottomMargin: 116
-       //Position the button in page1Container rectangle
-       anchors.bottom:page1Container.bottom;
-       anchors.right: page1Container.right
+    Text {
+        id: textLat
+        x: 100
+        y: 700
+        text: qsTr("Latitude:")
+        font.pixelSize: 25
+    }
 
-       onClicked: {
-           currentobservation.uploadSaved();
-           handlerLoader("mainMenu.qml")
-       }
+    TextArea {
+        id: latitude
+        frameVisible: true
+        textFormat: Qt.PlainText
+        x: 500
+        y: 700
+        width: 200
+        height: 40
+        font.pixelSize: 25
+        text: positionSource.position.coordinate.latitude
+        inputMethodHints: Qt.ImhDigitsOnly
+        MouseArea {
+            id: latitudeMouseArea
+            parent: latitude.viewport
+            anchors.fill: parent
+            acceptedButtons: Qt.RightButton
+            onPressed: editmenu.popup()
+        }
+        Component.onCompleted: {
 
-   }
+            positionSource.stop()
+            if (latitude.text === "nan")
+                messageDialogGPS.open()
+        }
+        }
 
-   Connections
-        {
-       target: myLoader.item;
-       onReturnData: {
-           currentobservation.data = data
-           currentobservation.location = "POINT(" + positionSource.position.coordinate.latitude + " " + positionSource.position.coordinate.longitude + ")"
-           currentobservation.observer = options.observer
-           currentobservation.server = options.server
-           currentobservation.time = Qt.formatDateTime(new Date(), "yyyy-MM-dd")
-           currentobservation.save();
-           handlerLoader("mainMenu.qml")
-       }
-   }
+                Text {
+                    id: textLong
+                    x: 100
+                    y: 750
+                    text: qsTr("Longitude:")
+                    font.pixelSize: 25
+                }
 
-   Button{
-       id:buttonSave
-       x: 224
-       y: 891
-       text: "save"
-       anchors.rightMargin: 469
-       anchors.bottomMargin: 116
-       //Position the button in page1Container rectangle
-       anchors.bottom:page1Container.bottom;
-       anchors.right: page1Container.right
+            TextArea {
+                id: longitude
+                frameVisible: true
+                textFormat: Qt.PlainText
+                x: 500
+                y: 750
+                width: 200
+                height: 40
+                font.pixelSize: 25
+                text: positionSource.position.coordinate.longitude
+                inputMethodHints: Qt.ImhDigitsOnly
+                MouseArea {
+                    id: longitudeMouseArea
+                    parent: longitude.viewport
+                    anchors.fill: parent
+                    acceptedButtons: Qt.RightButton
+                    onPressed: editmenu.popup()
+                }
+            }
 
-       onClicked: {
-           Connections
-                 {
-               target: myLoader.item.getData();
-                 }
-       }
-   }
+            //   Text {
+            //       id: textTimeNow
+            //       x: 500
+            //       y: 700
+            //       text: qsTr(Qt.formatDateTime(new Date(), "dd-MM-yy\nhh:mm:ss"))
+            //       font.pixelSize: 25
+            //   }
 
-}
+            //   Text {
+            //       id: textTime
+            //       x: 100
+            //       y: 700
+            //       text: qsTr("Date/Time:")
+            //       font.pixelSize: 25
+            //   }
+
+            Button{
+                id:buttonCancel
+                x: 450
+                y: 850
+                text: "cancel"
+
+                onClicked: {
+                    handlerLoader("mainMenu.qml")
+                }
+
+            }
+
+            Connections
+            {
+                target: myLoader.item;
+                onReturnData: {
+                    currentobservation.data = data
+                    currentobservation.location = "POINT(" + latitude.text + " " + longitude.text + ")"
+                    currentobservation.observer = options.observer
+                    currentobservation.server = options.server
+                    currentobservation.time = Qt.formatDateTime(new Date(), "yyyy-MM-dd")
+                    currentobservation.save();
+                    messageDialog.open();
+                }
+            }
+
+            Button{
+                id:buttonSave
+                x: 150
+                y: 850
+                text: "save"
+
+                onClicked: {
+                    Connections
+                    {
+                        target: myLoader.item.getData();
+                    }
+                }
+            }
+
+            Button{
+                id:buttonUpdate
+                x: 150
+                y: 950
+                text: "update location"
+
+                onClicked: {
+                    positionSource.update()
+                    latitude.text = positionSource.position.coordinate.latitude
+                    longitude.text = positionSource.position.coordinate.longitude
+                }
+            }
+
+        }

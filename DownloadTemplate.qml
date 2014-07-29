@@ -51,7 +51,8 @@ Rectangle {
             text: "Download from server"
 
             onClicked: {
-                downloadtemplate.getSubjectList()
+                busyIndicator.running = true
+                downloadtemplate.getSubjectList(options.server)
                 //handlerLoader("DownloadTemplateTest.qml")
             }
         }
@@ -71,5 +72,13 @@ Rectangle {
             handlerLoader("mainMenu.qml")
         }
 
+    }
+    BusyIndicator {
+        id: busyIndicator
+        anchors.horizontalCenterOffset: 0
+        anchors.verticalCenterOffset: 178
+        running: false
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
     }
 }

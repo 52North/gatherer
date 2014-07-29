@@ -11,41 +11,12 @@ Rectangle {
 
     Text {
         id: textField
-        x: 256
         y: 69
         text: qsTr("Select Template")
+        anchors.horizontalCenter: parent.horizontalCenter
         font.pointSize: 25
     }
 
-    ListView {
-        anchors.horizontalCenter: parent.horizontalCenter
-        y: 182
-        width: 300; height: 500
-
-        model: downloadtemplate.model
-        delegate: Rectangle {
-            anchors.horizontalCenter: parent.horizontalCenter
-            height: 100
-            width: 600
-            border.width: 1
-            border.color: "black"
-            //color: model.modelData.color
-            Text {
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                text: name }
-            MouseArea {
-                id: mousearea2
-                anchors.fill: parent
-                onClicked: {
-                    textField.text = qsTr("Loading template...")
-                    currentobservation.url = model.modelData.color;
-                    //currentobservation.name = model.modelData.name;
-                    handlerLoader("Observation.qml")
-                }
-            }
-        }
-    }
 
     Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -77,37 +48,38 @@ Rectangle {
     }
     Button{
         id: open
-        x: 193
-        y: 891
+        x: 150
+        y: 900
         text: "Open"
-        anchors.rightMargin: 500
-        anchors.bottomMargin: 116
-        //Position the button in page1Container rectangle
-        anchors.bottom:top.bottom;
-        anchors.right: top.right
 
         onClicked: {
-            console.log(tableview.currentRow)
-            console.log(tableview.childAt(tableview.currentRow,1).color)
-            currentobservation.url = tableview.childAt(tableview.currentRow,1);
+            //console.log(tableview.currentRow)
+            //console.log(downloadtemplate.getUrl(tableview.currentRow))
+            busyIndicator.running = true;
+            options.current = downloadtemplate.getUrl(tableview.currentRow);
+            options.save();
+            currentobservation.url = downloadtemplate.getUrl(tableview.currentRow);
             handlerLoader("Observation.qml")
         }
 
     }
     Button{
         id:buttonCancelWater
-        x: 474
-        y: 891
+        x: 450
+        y: 900
         text: "back"
-        anchors.rightMargin: 219
-        anchors.bottomMargin: 116
-        //Position the button in page1Container rectangle
-        anchors.bottom:top.bottom;
-        anchors.right: top.right
 
         onClicked: {
             handlerLoader("mainMenu.qml")
         }
 
+    }
+
+    BusyIndicator {
+        id: busyIndicator
+        anchors.verticalCenterOffset: -88
+        running: false
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
     }
 }

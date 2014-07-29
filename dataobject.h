@@ -50,17 +50,31 @@ class DataObject : public QObject
 
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QString color READ color WRITE setColor NOTIFY colorChanged)
-//![0]
+    Q_PROPERTY(QString time READ time CONSTANT)
+    Q_PROPERTY(QString subjectname READ subjectname CONSTANT)
+    Q_PROPERTY(QString data READ data CONSTANT)
+    //![0]
 
 public:
+//    DataObject() {}
+//    DataObject(const DataObject &other);
+//    DataObject &operator=(const DataObject &other);
+
     DataObject(QObject *parent=0);
     DataObject(const QString &name, const QString &color, QObject *parent=0);
+    DataObject(const QString &time, const QString &subjectname, const QString &data, QObject *parent=0);
 
     QString name() const;
     void setName(const QString &name);
 
     QString color() const;
     void setColor(const QString &color);
+
+    QString time() const;
+
+    QString subjectname() const;
+
+    QString data() const;
 
 signals:
     void nameChanged();
@@ -69,7 +83,10 @@ signals:
 private:
     QString m_name;
     QString m_color;
-//![1]
+    QString m_time;
+    QString m_subjectname;
+    QString m_data;
+    //![1]
 };
 //![1]
 

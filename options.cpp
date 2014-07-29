@@ -9,6 +9,7 @@ Options::Options(QObject *parent) :
 {
     m_server = "http://130.89.222.201:8095/gatherer";
     m_observer = "henk";
+    m_current = "not";
     QDirIterator dirIt("/data/data/org.qtproject.example.Gatherer/files/",QDirIterator::Subdirectories);
     while (dirIt.hasNext()) {
         dirIt.next();
@@ -30,6 +31,7 @@ Options::Options(QObject *parent) :
                         QStringList options = content.split(";");
                         m_server = options[0];
                         m_observer = options[1];
+                        m_current = options[2];
                     }
                 }
             }
@@ -58,6 +60,16 @@ void Options::setObserver(QString observer)
     m_observer = observer;
 }
 
+QString Options::current()
+{
+    return m_current;
+}
+
+void Options::setCurrent(QString current)
+{
+    m_current = current;
+}
+
 void Options::save()
 {
     QString filename= "/data/data/org.qtproject.example.Gatherer/files/options.ini";
@@ -65,6 +77,6 @@ void Options::save()
     if ( file.open(QIODevice::ReadWrite) )
     {
         QTextStream stream( &file );
-        stream << m_server + ";" + m_observer;
+        stream << m_server + ";" + m_observer + ";" + m_current;
     }
 }
