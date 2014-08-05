@@ -49,9 +49,8 @@ int main(int argc, char *argv[])
     ctxt->setContextProperty("downloadtemplate", &downloadTemplate);
     ctxt->setContextProperty("currentobservation", &currentObservation);
     ctxt->setContextProperty("options", &options);
-    //![0]
 
-
+//downloadTemplate.getMaps();
 
     //view.setSource(QUrl("qrc:main.qml"));
     //view.show();

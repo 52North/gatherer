@@ -23,6 +23,9 @@ public:
     Q_INVOKABLE QString getUrl(const int & i) const;
     Q_INVOKABLE QString getSubject(const int & i) const;
     Q_INVOKABLE QString templateName(const QString & name) const;
+    Q_INVOKABLE void getMap();
+
+    Q_INVOKABLE void getMaps();
 
     QQmlListProperty<DataObject> model();
     QQmlListProperty<DataObject> subjectsModel();
@@ -33,12 +36,14 @@ public:
 
 signals:
     void responseReady();
+    void downloadMap();
 
 private:
     QList<DataObject *> m_model;
     QList<DataObject *> m_subjects;
     QNetworkAccessManager* nam = 0;
     QString m_templateName;
+    QString m_mapUrl;
     QList<QString> m_urls;
     QStringList m_subjectslist;
     QHash<QString, QString> m_templateNames;
@@ -46,6 +51,8 @@ private:
 public slots:
     void finishedSlot(QNetworkReply * reply);
     void finishedSubjectListSlot(QNetworkReply * reply);
+    void finishedMapSlot(QNetworkReply * reply);
+    void finishedMapSlots(QNetworkReply * reply);
 
 };
 

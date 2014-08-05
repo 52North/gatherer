@@ -55,8 +55,7 @@ Rectangle {id:template
         id: choices
         ListElement { text: "Continuous Urban fabric" }
         ListElement { text: "Discontinuous Dense Urban Fabric" }
-        ListElement { text: "Discontinuous Medium Density" }
-        ListElement { text: "Urban Fabric" }
+        ListElement { text: "Discontinuous Medium Density Urban Fabric" }
         ListElement { text: "Discontinuous Low Density Urban Fabric" }
         ListElement { text: "Discontinuous Very Low Density Urban Fabric" }
         ListElement { text: "Isolated Structures" }

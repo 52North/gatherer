@@ -3,6 +3,8 @@
 #include <QNetworkReply>
 #include <QFile>
 #include <QTextStream>
+#include <QImage>
+#include <QXmlStreamReader>
 
 CurrentObservation::CurrentObservation(QObject *parent) :
     QObject(parent)
@@ -25,7 +27,61 @@ void CurrentObservation::setUrl(const QString url)
     QStringList dirs = m_url.split("/");
     QStringList last = dirs[dirs.length() - 1].split(".");
     m_name = last[0];
-}
+    m_map = "";
+    for (int i = 0;i<dirs.length() - 1;i++)
+        m_map += dirs[i] + "/";
+    m_map += m_name + ".png";
+
+    QString filename= "/data/data/org.qtproject.example.Gatherer/files/" + m_name + ".gatherer";
+    QString content;
+    QFile file( filename );
+    if ( file.open(QIODevice::ReadWrite) )
+    {
+        QTextStream stream( &file );
+        content = stream.readAll();
+    }
+    file.close();
+
+    QStringList metadata = content.split( "\n" );
+    QString name = metadata[0].trimmed();
+
+    for (int i=1;i<metadata.length();i++){
+        QStringList line = metadata[i].split("|");
+        if (line.length() > 2)
+            if (line[1] == "BaseMap"){
+                QString mapUrl = line[2].trimmed();
+                QStringList request = mapUrl.split("&");
+                for (int j=0;j<request.length();j++){
+                    if (request[j].startsWith("BBOX")){
+                        QStringList parts = request[j].split("=");
+                        QStringList coords = parts[1].split(",");
+                        m_xmin = coords[0];
+                        m_ymin = coords[1];
+                        m_xmax = coords[2];
+                        m_ymax = coords[3];
+                    }
+                    if (request[j].startsWith("WIDTH")){
+                        QStringList parts = request[j].split("=");
+                        m_width = parts[1];
+                    }
+                    if (request[j].startsWith("HEIGHT")){
+                        QStringList parts = request[j].split("=");
+                        m_height = parts[1];
+                    }
+                }
+            }
+    }
+} // http://130.89.222.201:8080/geoserver/wms?
+//SERVICE=WMS&
+//REQUEST=GetMap&
+//VERSION=1.1&
+//LAYERS=cite:itc_false_color_stdev25_tif_60cm&
+//CRS=EPSG:32632&
+//STYLES=&
+//BBOX=355049.7,5787599.8,356050.5,5788280.3&
+//WIDTH=1668&
+//HEIGHT=1134&
+//FORMAT=image/png
 
 QString CurrentObservation::name() const
 {
@@ -90,6 +146,41 @@ void CurrentObservation::setServer(const QString server)
 QString CurrentObservation::response() const
 {
     return m_response;
+}
+
+QString CurrentObservation::map() const
+{
+    return m_map;
+}
+
+QString CurrentObservation::xmin() const
+{
+    return m_xmin;
+}
+
+QString CurrentObservation::xmax() const
+{
+    return m_xmax;
+}
+
+QString CurrentObservation::ymin() const
+{
+    return m_ymin;
+}
+
+QString CurrentObservation::ymax() const
+{
+    return m_ymax;
+}
+
+QString CurrentObservation::width() const
+{
+    return m_width;
+}
+
+QString CurrentObservation::height() const
+{
+    return m_height;
 }
 
 void CurrentObservation::upload()
@@ -226,6 +317,131 @@ void CurrentObservation::deleteObservation(int i)
     file.close();
 }
 
+QString CurrentObservation::mapAvailable()
+{
+    QStringList filename = m_map.split("//");
+    QFile file(filename[1]);
+    QString result = "false";
+    if (file.exists()) {
+        result = "true";
+        return result;
+    }
+    else
+        return result;
+}
+
+void CurrentObservation::downloadObservations(QString from, QString to)
+{
+    if ( nam)
+        delete nam;
+
+    QString urlString = m_server + "?subjectquery=" + m_name + "&begintime=" + from + "&endtime=" + to + "&envelope=" + m_ymax + "," + m_xmin + "," + m_ymin + "," + m_xmax;
+
+
+    nam = new QNetworkAccessManager();
+    QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
+                     this, SLOT(finishedDownloadSlot(QNetworkReply*)));
+    QUrl url(urlString);
+    nam->get(QNetworkRequest(url));
+}
+
+void CurrentObservation::downloadObservations(QString from)
+{
+    if ( nam)
+        delete nam;
+
+    QString urlString = m_server + "?subjectquery=" + m_name + "&begintime=" + from + "&envelope=" + m_ymax + "," + m_xmin + "," + m_ymin + "," + m_xmax;
+
+
+    nam = new QNetworkAccessManager();
+    QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
+                     this, SLOT(finishedDownloadSlot(QNetworkReply*)));
+    QUrl url(urlString);
+    nam->get(QNetworkRequest(url));
+}
+
+void CurrentObservation::downloadObservations()
+{
+    if ( nam)
+        delete nam;
+
+    QString urlString = m_server + "?subjectquery=" + m_name + "&envelope=" + m_ymax + "," + m_xmin + "," + m_ymin + "," + m_xmax;
+
+
+    nam = new QNetworkAccessManager();
+    QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
+                     this, SLOT(finishedDownloadSlot(QNetworkReply*)));
+    QUrl url(urlString);
+    nam->get(QNetworkRequest(url));
+}
+
+void CurrentObservation::finishedDownloadSlot(QNetworkReply *reply)
+{
+    const QString content = reply->readAll();
+
+    QXmlStreamReader xmlReader (content);
+    xmlReader.readNext();
+    bool firstObservation = false;
+    bool secondObservation = false;
+    //Reading from the file
+    QString time = "";
+    QString observation = "";
+    QString observer = "";
+    QStringList coords = {"",""};
+    while (!xmlReader.atEnd())
+    {
+
+        if (xmlReader.isStartElement())
+        {
+            QString name = xmlReader.name().toString();
+            //qDebug()<< "start-tag: " + name;
+            if (name == "Observation") {
+                if (firstObservation) {
+                    //secondObservation = true;
+                    observation = xmlReader.readElementText();
+                    //qDebug()<< observation;
+                }
+                else
+                    firstObservation = true;
+
+            } else if (name == "Location") {
+                QString text = xmlReader.readElementText();
+                QString coord = text.mid(6, text.length() - 7);
+                coords = coord.split(" ");
+            } else if (name == "TimeStamp") {
+                QString text = xmlReader.readElementText();
+                time = text.left(10);
+                //qDebug()<< time;
+            } else if (name == "Observer") {
+                observer = xmlReader.readElementText();
+                //qDebug()<< observer;
+            }
+
+        } else if (xmlReader.isEndElement()) {
+            QString name = xmlReader.name().toString();
+            //qDebug()<< "end-tag: " + name;
+            if (name == "Observation")
+            {
+                if (secondObservation)
+                    secondObservation = false;
+                else {
+                    firstObservation = false;
+                    emit addPoint(coords[0].toDouble(), coords[1].toDouble(), observation, time, observer);
+                }
+            }
+        }
+        xmlReader.readNext();
+
+    }
+    if (xmlReader.hasError())
+    {
+        qDebug() << "XML error: " << xmlReader.errorString();
+        qDebug() << firstObservation + " " + secondObservation;
+    }
+
+}
+
+
 QQmlListProperty<DataObject> CurrentObservation::model()
 {
     return QQmlListProperty<DataObject>(this,m_model);
@@ -324,7 +540,5 @@ void CurrentObservation::finishedUploadallSlot(QNetworkReply *reply)
         QUrl url(observations[m_i]);
         nam->get(QNetworkRequest(url));
     }
-
-
 }
 

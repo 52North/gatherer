@@ -10,10 +10,44 @@ Rectangle {
     color: "#d4d4d4"
     signal handlerLoader(string name)
 
+    Item {
+         Connections {
+             target: downloadtemplate
+             onDownloadMap: messageDialog.open()
+             onResponseReady: {
+                 busyIndicator.running = false;
+                 messageDialogReady.open()
+             }
+         }
+     }
+
+    BusyIndicator {
+        id: busyIndicator
+        anchors.horizontalCenterOffset: 0
+        anchors.verticalCenterOffset: 268
+        running: false
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+    }
+
     MessageDialog {
         id: messageDialog
-        title: "Template stored locally"
-        text: "Download another template?"
+        title: "Basemap"
+        text: "There is a basemap available. Download basemap?"
+        standardButtons: StandardButton.Yes | StandardButton.No
+        onYes: {
+            busyIndicator.running = true;
+            downloadtemplate.getMap()
+            }
+        onNo: {
+            messageDialogReady.open()
+        }
+    }
+
+    MessageDialog {
+        id: messageDialogReady
+        title: "Template saved"
+        text: "The template is now ready for use. Download another?"
         standardButtons: StandardButton.Yes | StandardButton.No
         onYes: {
             }
@@ -67,9 +101,8 @@ Rectangle {
         text: "Download"
 
         onClicked: {
-            if (tableview.currentRow >= 0) {
+            if (tableview.currentRow >= 0 && busyIndicator.running === false) {
                 downloadtemplate.downloadFromUrl(options.server, downloadtemplate.getSubject(tableview.currentRow))
-                messageDialog.open()
             }
         }
     }
@@ -80,7 +113,8 @@ Rectangle {
         text: "Back"
 
         onClicked: {
-            handlerLoader("DownloadTemplate.qml")
+            if (busyIndicator.running === false)
+            handlerLoader("mainMenu.qml")
         }
     }
 }

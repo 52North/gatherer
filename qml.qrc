@@ -9,12 +9,18 @@
         <file>content/AndroidDelegate.qml</file>
         <file>navigation_previous_item.png</file>
         <file>textinput.png</file>
-        <file>DownloadTemplateTest.qml</file>
+        <file>DownloadTemplateFromServer.qml</file>
         <file>Observation.qml</file>
         <file>Template_LandUseMapping.qml</file>
         <file>Template_Cholera.qml</file>
         <file>Template_Tubercolosis.qml</file>
         <file>Options.qml</file>
         <file>SavedObservations.qml</file>
+        <file>Template.qml</file>
+        <file>Map.qml</file>
+        <file>Zoom-in-icon.png</file>
+        <file>Zoom-out-icon.png</file>
+        <file>here_small.png</file>
+        <file>marker_small.png</file>
     </qresource>
 </RCC>

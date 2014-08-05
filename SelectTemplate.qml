@@ -59,7 +59,7 @@ Rectangle {
             options.current = downloadtemplate.getUrl(tableview.currentRow);
             options.save();
             currentobservation.url = downloadtemplate.getUrl(tableview.currentRow);
-            handlerLoader("Observation.qml")
+            handlerLoader("Template.qml")
         }
 
     }

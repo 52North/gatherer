@@ -53,6 +53,7 @@ Rectangle {
             onClicked: {
                 busyIndicator.running = true
                 downloadtemplate.getSubjectList(options.server)
+                //currentobservation.getMap()
                 //handlerLoader("DownloadTemplateTest.qml")
             }
         }

@@ -8,7 +8,12 @@ Rectangle {
     color: "#d4d4d4"
     signal handlerLoader(string name)
 
-
+    Item {
+         Connections {
+             target: downloadtemplate
+             onResponseReady: handlerLoader("DownloadTemplateFromServer.qml")
+         }
+     }
 
     Column {
         anchors.centerIn: parent
@@ -24,9 +29,8 @@ Rectangle {
                 if (options.current === "not")
                     continueButton.text = "Not available"
                 else {
-                    busyIndicator.running = true
                     currentobservation.url = options.current
-                    handlerLoader("Observation.qml")
+                    handlerLoader("Template.qml")
                 }
             }
         }
@@ -43,7 +47,10 @@ Rectangle {
             height: 150
             text: "Download template"
 
-            onClicked: handlerLoader("DownloadTemplate.qml")
+            onClicked: {
+                busyIndicator.running = true
+                downloadtemplate.getSubjectList(options.server)
+            }
         }
         Button {
             id: observationsButton
@@ -60,7 +67,7 @@ Rectangle {
     BusyIndicator {
         id: busyIndicator
         anchors.horizontalCenterOffset: 0
-        anchors.verticalCenterOffset: -337
+        anchors.verticalCenterOffset: 114
         running: false
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
