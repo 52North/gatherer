@@ -375,6 +375,79 @@ void CurrentObservation::downloadObservations()
     nam->get(QNetworkRequest(url));
 }
 
+void CurrentObservation::showObservations(const QString from, const QString to)
+{
+    QString filename= "/data/data/org.qtproject.example.Gatherer/files/" + m_name + ".xml";
+    QFile file( filename );
+    QDateTime fromDate = QDateTime::fromString(from, "yyyy-MM-dd");
+    QDateTime toDate = QDateTime::fromString(to, "yyyy-MM-dd");
+    if ( file.open(QIODevice::ReadWrite) )
+    {
+        QXmlStreamReader xmlReader;
+        xmlReader.setDevice(&file);
+        xmlReader.readNext();
+        bool firstObservation = false;
+        bool secondObservation = false;
+        //Reading from the file
+        QString time = "";
+        QString observation = "";
+        QString observer = "";
+        QStringList coords = {"",""};
+        while (!xmlReader.atEnd())
+        {
+
+            if (xmlReader.isStartElement())
+            {
+                QString name = xmlReader.name().toString();
+                //qDebug()<< "start-tag: " + name;
+                if (name == "Observation") {
+                    if (firstObservation) {
+                        //secondObservation = true;
+                        observation = xmlReader.readElementText();
+                        //qDebug()<< observation;
+                    }
+                    else
+                        firstObservation = true;
+
+                } else if (name == "Location") {
+                    QString text = xmlReader.readElementText();
+                    QString coord = text.mid(6, text.length() - 7);
+                    coords = coord.split(" ");
+                } else if (name == "TimeStamp") {
+                    QString text = xmlReader.readElementText();
+                    time = text.left(10);
+                    //qDebug()<< time;
+                } else if (name == "Observer") {
+                    observer = xmlReader.readElementText();
+                    //qDebug()<< observer;
+                }
+
+            } else if (xmlReader.isEndElement()) {
+                QString name = xmlReader.name().toString();
+                //qDebug()<< "end-tag: " + name;
+                if (name == "Observation")
+                {
+                    if (secondObservation)
+                        secondObservation = false;
+                    else {
+                        firstObservation = false;
+                        QDateTime timeDate = QDateTime::fromString(time, "yyyy-MM-dd");
+                        if (timeDate <= toDate && timeDate >= fromDate)
+                            emit addPoint(coords[0].toDouble(), coords[1].toDouble(), observation, time, observer);
+                    }
+                }
+            }
+            xmlReader.readNext();
+
+        }
+        if (xmlReader.hasError())
+        {
+            qDebug() << "XML error: " << xmlReader.errorString();
+            qDebug() << firstObservation + " " + secondObservation;
+        }
+    }
+}
+
 void CurrentObservation::finishedDownloadSlot(QNetworkReply *reply)
 {
     const QString content = reply->readAll();

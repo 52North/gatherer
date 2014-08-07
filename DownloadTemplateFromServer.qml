@@ -14,6 +14,7 @@ Rectangle {
          Connections {
              target: downloadtemplate
              onDownloadMap: messageDialog.open()
+             onDownloadObservationsSig: messageDialogObservations.open()
              onResponseReady: {
                  busyIndicator.running = false;
                  messageDialogReady.open()
@@ -38,6 +39,20 @@ Rectangle {
         onYes: {
             busyIndicator.running = true;
             downloadtemplate.getMap()
+            }
+        onNo: {
+            messageDialogObservations.open()
+        }
+    }
+
+    MessageDialog {
+        id: messageDialogObservations
+        title: "Historic observations"
+        text: "Do you want to download historical observations?"
+        standardButtons: StandardButton.Yes | StandardButton.No
+        onYes: {
+            busyIndicator.running = true;
+            downloadtemplate.downloadObservations(options.server)
             }
         onNo: {
             messageDialogReady.open()

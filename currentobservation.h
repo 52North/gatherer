@@ -77,6 +77,7 @@ public:
     Q_INVOKABLE void downloadObservations(QString from, QString to);
     Q_INVOKABLE void downloadObservations(QString from);
     Q_INVOKABLE void downloadObservations();
+    Q_INVOKABLE void showObservations(const QString from, const QString to);
 
     QQmlListProperty<DataObject> model();
     Q_PROPERTY(QQmlListProperty<DataObject> model READ model CONSTANT)

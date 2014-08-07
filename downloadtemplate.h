@@ -24,6 +24,7 @@ public:
     Q_INVOKABLE QString getSubject(const int & i) const;
     Q_INVOKABLE QString templateName(const QString & name) const;
     Q_INVOKABLE void getMap();
+    Q_INVOKABLE void downloadObservations(const QString & server);
 
     Q_INVOKABLE void getMaps();
 
@@ -37,6 +38,7 @@ public:
 signals:
     void responseReady();
     void downloadMap();
+    void downloadObservationsSig();
 
 private:
     QList<DataObject *> m_model;
@@ -53,6 +55,7 @@ public slots:
     void finishedSubjectListSlot(QNetworkReply * reply);
     void finishedMapSlot(QNetworkReply * reply);
     void finishedMapSlots(QNetworkReply * reply);
+    void finishedObservationsSlot(QNetworkReply * reply);
 
 };
 

@@ -12,6 +12,19 @@ Rectangle {id:page1Container
         id: positionSource
         updateInterval: 1000
         active: true
+        property string lat: positionSource.position.coordinate.latitude
+        onPositionChanged: {
+            if (positionSource.lat !== "nan") {
+                point.text = "You are here\n" + positionSource.position.coordinate.latitude + " " + positionSource.position.coordinate.longitude
+                point.y = (1-(positionSource.position.coordinate.latitude - image.ymin) / (image.ymax - image.ymin)) * image.height
+                point.x = (positionSource.position.coordinate.longitude - image.xmin) / (image.xmax - image.xmin) * image.width
+            }
+            else {
+                point.text = "No GPS signal"
+                point.y = image.ymin
+                point.x = image.xmin
+            }
+        }
     }
 
     MessageDialog {
@@ -39,6 +52,7 @@ Rectangle {id:page1Container
         contentWidth: image.width;
         contentHeight: image.height
         clip: true
+        focus: true
         boundsBehavior: Flickable.StopAtBounds;
         signal message (string messageText);
         property int amount:0;
@@ -50,18 +64,18 @@ Rectangle {id:page1Container
         Image {
             id: image;
             source: currentobservation.map
-            property double xmin: currentobservation.xmin //6.877760913337248
-            property double xmax: currentobservation.xmax //6.892692511708865
-            property double ymin: currentobservation.ymin //52.21973335800224
-            property double ymax: currentobservation.ymax //52.226108841080546
+            property double xmin: currentobservation.xmin //6.877760913337248 // 5.65933
+            property double xmax: currentobservation.xmax //6.892692511708865 // 5.68899
+            property double ymin: currentobservation.ymin //52.21973335800224 // 51.96894
+            property double ymax: currentobservation.ymax //52.226108841080546 // 51.98258
 
 
         }
         Image {
             id: point;
-            property string text: "You are here"
-            y: (1-(52.22386 - image.ymin) / (image.ymax - image.ymin)) * image.height
-            x: (6.88604 - image.xmin) / (image.xmax - image.xmin) * image.width
+            property string text: "No GPS signal"
+            y: image.ymin
+            x: image.xmin
             source: "here_small.png"
             MouseArea {
                 anchors.fill: parent;
@@ -88,6 +102,8 @@ Rectangle {id:page1Container
             onClicked: {
                 image.height = image.height * 0.9
                 image.width = image.width * 0.9
+                point.y = point.y * 0.9
+                point.x = point.x * 0.9
             }
         }
     }
@@ -108,6 +124,8 @@ Rectangle {id:page1Container
             onClicked: {
                 image.height = image.height * 1.1
                 image.width = image.width * 1.1
+                point.y = point.y * 1.1
+                point.x = point.x * 1.1
             }
         }
     }
@@ -165,7 +183,7 @@ Rectangle {id:page1Container
         id:buttonSave
         x: 300
         y: 900
-        text: "Download observations"
+        text: "Show observations"
 
         onClicked: {
             for (var i=0;i<flick.amount;i++)
@@ -174,12 +192,12 @@ Rectangle {id:page1Container
             flick.amount = 0;
             currentobservation.server = options.server;
             if (from.text === "jjjj-mm-dd" || from.text === "")
-                currentobservation.downloadObservations()
+                currentobservation.showObservations("1970-01-01", "2100-12-31")
             else
                 if (to.text === "jjjj-mm-dd" || to.text === "")
-                    currentobservation.downloadObservations(from.text)
+                    currentobservation.showObservations(from.text, "2100-12-31")
                 else
-                    currentobservation.downloadObservations(from.text, to.text)
+                    currentobservation.showObservations(from.text, to.text)
         }
     }
 

@@ -12,8 +12,11 @@
 DownloadTemplate::DownloadTemplate(QObject *parent) :
     QObject(parent)
 {
+    // for testing
     m_model.append(new DataObject("test", "file:///storage/emulated/0/Download/Template_LandUseMapping.qml"));
     m_urls.append("file:///storage/emulated/0/Download/Template_LandUseMapping.qml");
+
+    // normal
     QString filenameNames= "/data/data/org.qtproject.example.Gatherer/files/names.txt";
     QFile fileNames( filenameNames );
     QString content;
@@ -128,7 +131,6 @@ void DownloadTemplate::finishedSlot(QNetworkReply *reply)
             if (line[1] == "BaseMap"){
                 m_mapUrl = line[2].trimmed();
                 mapAvailable = true;
-                emit downloadMap();
             }
     }
 
@@ -164,8 +166,10 @@ void DownloadTemplate::finishedSlot(QNetworkReply *reply)
     }
     m_model.append(new DataObject(name, "file://" + filename));
     m_urls.append("file://" + filename);
-    if (!mapAvailable)
-        emit responseReady();
+    if (mapAvailable)
+        emit downloadMap();
+    else
+        emit downloadObservationsSig();
 }
 
 void DownloadTemplate::getSubjectList(const QString & server)
@@ -237,9 +241,10 @@ void DownloadTemplate::finishedMapSlot(QNetworkReply *reply)
         qDebug() << "oops";
 
     img->save("/data/data/org.qtproject.example.Gatherer/files/" + m_templateName + ".png");
-    emit responseReady();
+    emit downloadObservationsSig();
 }
 
+// for testing
 void DownloadTemplate::getMaps()
 {
     qDebug() <<"aangeroepen";
@@ -253,7 +258,7 @@ void DownloadTemplate::getMaps()
     nam->get(QNetworkRequest(url));
 }
 
-
+// for testing
 void DownloadTemplate::finishedMapSlots(QNetworkReply *reply)
 {
    qDebug() <<"ontvangen";
@@ -265,4 +270,33 @@ void DownloadTemplate::finishedMapSlots(QNetworkReply *reply)
 
     img->save("/storage/emulated/0/Download/Template_LandUseMapping.png");
     qDebug() <<"gesaved";
+}
+
+void DownloadTemplate::downloadObservations(const QString &server)
+{
+    if ( nam)
+        delete nam;
+
+    QString urlString = server + "?subjectquery=" + m_templateName;
+
+
+    nam = new QNetworkAccessManager();
+    QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
+                     this, SLOT(finishedObservationsSlot(QNetworkReply*)));
+    QUrl url(urlString);
+    nam->get(QNetworkRequest(url));
+}
+
+void DownloadTemplate::finishedObservationsSlot(QNetworkReply *reply)
+{
+    QString content = reply->readAll();
+    QString filename= "/data/data/org.qtproject.example.Gatherer/files/" + m_templateName + ".xml";
+    QFile file( filename );
+    if ( file.open(QIODevice::ReadWrite) )
+    {
+        QTextStream stream( &file );
+        stream << content;
+    }
+    file.close();
+    emit responseReady();
 }
