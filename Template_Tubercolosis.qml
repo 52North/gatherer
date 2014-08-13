@@ -1,3 +1,9 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This is an example template for health mapping - tubercolosis
+
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1

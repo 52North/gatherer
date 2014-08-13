@@ -1,3 +1,9 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This is the header file for the class DownloadTemplate which handles everything about downloading templates, the basemap, historical observations and stores them.
+
 #ifndef DOWNLOADTEMPLATE_H
 #define DOWNLOADTEMPLATE_H
 

@@ -1,62 +1,24 @@
-/****************************************************************************
-**
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
-**
-** This file is part of the examples of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** You may use this file under the terms of the BSD license as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
-**     of its contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This is the source file for the class DataObject which stores data for list models.
 
 #include <QDebug>
 #include "dataobject.h"
-
-//DataObject::DataObject(const DataObject &other)
-//: name(other.name, color(other.color)
-//{
-
-//}
 
 DataObject::DataObject(QObject *parent)
     : QObject(parent)
 {
 }
 
-DataObject::DataObject(const QString &name, const QString &color, QObject *parent)
-    : QObject(parent), m_name(name), m_color(color)
+/// Constructor for the lists of templates
+DataObject::DataObject(const QString &name, const QString &url, QObject *parent)
+    : QObject(parent), m_name(name), m_url(url)
 {
 }
 
+/// Constructor for the list of observations
 DataObject::DataObject(const QString &time, const QString &subjectname, const QString &data, QObject *parent)
     : QObject(parent), m_time(time), m_subjectname(subjectname), m_data(data)
 {
@@ -70,23 +32,17 @@ QString DataObject::name() const
 
 void DataObject::setName(const QString &name)
 {
-    if (name != m_name) {
-        m_name = name;
-        emit nameChanged();
-    }
+    m_name = name;
 }
 
-QString DataObject::color() const
+QString DataObject::url() const
 {
-    return m_color;
+    return m_url;
 }
 
-void DataObject::setColor(const QString &color)
+void DataObject::setUrl(const QString &url)
 {
-    if (color != m_color) {
-        m_color = color;
-        emit colorChanged();
-    }
+    m_url = url;
 }
 
 QString DataObject::time() const

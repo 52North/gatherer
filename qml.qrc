@@ -5,10 +5,6 @@
         <file>mainMenu.qml</file>
         <file>SelectTemplate.qml</file>
         <file>DownloadTemplate.qml</file>
-        <file>toolbar.png</file>
-        <file>content/AndroidDelegate.qml</file>
-        <file>navigation_previous_item.png</file>
-        <file>textinput.png</file>
         <file>DownloadTemplateFromServer.qml</file>
         <file>Observation.qml</file>
         <file>Template_LandUseMapping.qml</file>

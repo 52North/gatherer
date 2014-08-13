@@ -1,3 +1,9 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This shows the saved observations and makes it possible to upload or delete them.
+
 import QtQuick 2.2
 import QtQuick.Controls 1.1
 import QtQuick.Dialogs 1.1
@@ -17,7 +23,6 @@ Rectangle {
         text: currentobservation.response
         onAccepted: {
         }
-        //Component.onCompleted: visible = true
     }
 
     Text {
@@ -43,13 +48,13 @@ Rectangle {
                 title: "Template"
                 width: 350
                 delegate: Component {
-                            Text {
-                                anchors.verticalCenter: parent.verticalCenter
-                                color: styleData.textColor
-                                elide: styleData.elideMode
-                                text: downloadtemplate.templateName(styleData.value)
-                            }
-                        }
+                    Text {
+                        anchors.verticalCenter: parent.verticalCenter
+                        color: styleData.textColor
+                        elide: styleData.elideMode
+                        text: downloadtemplate.templateName(styleData.value)
+                    }
+                }
             }
             TableViewColumn {
                 role: "time"
@@ -57,12 +62,6 @@ Rectangle {
                 width: 250
             }
 
-
-            //            TableViewColumn {
-            //                role: "data"
-            //                title: "Data"
-            //                width: 250
-            //            }
         }
     }
     Button{

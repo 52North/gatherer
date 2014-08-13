@@ -1,3 +1,9 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This is the gui component to change the settings.
+
 import QtQuick 2.0
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
@@ -79,7 +85,6 @@ Rectangle {
             text: "cancel"
             anchors.rightMargin: 219
             anchors.bottomMargin: 116
-            //Position the button in page1Container rectangle
             anchors.bottom:top.bottom;
             anchors.right: top.right
 
@@ -95,7 +100,6 @@ Rectangle {
             text: "save"
             anchors.rightMargin: 469
             anchors.bottomMargin: 116
-            //Position the button in page1Container rectangle
             anchors.bottom:top.bottom;
             anchors.right: top.right
 

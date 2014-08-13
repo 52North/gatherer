@@ -1,3 +1,9 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This shows the map of the template and makes it possible to show historic observations
+
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Dialogs 1.1
@@ -16,8 +22,8 @@ Rectangle {id:page1Container
         onPositionChanged: {
             if (positionSource.lat !== "nan") {
                 point.text = "You are here\n" + positionSource.position.coordinate.latitude + " " + positionSource.position.coordinate.longitude
-                point.y = (1-(positionSource.position.coordinate.latitude - image.ymin) / (image.ymax - image.ymin)) * image.height
-                point.x = (positionSource.position.coordinate.longitude - image.xmin) / (image.xmax - image.xmin) * image.width
+                point.y = (1-(positionSource.position.coordinate.latitude - image.ymin) / (image.ymax - image.ymin)) * image.height - 15
+                point.x = (positionSource.position.coordinate.longitude - image.xmin) / (image.xmax - image.xmin) * image.width - 15
             }
             else {
                 point.text = "No GPS signal"
@@ -85,8 +91,9 @@ Rectangle {id:page1Container
             }
         }
     }
+
     Rectangle {
-        id: zoomIn;
+        id: zoomOut;
         x: 630;
         y: 150;
         width: 74
@@ -100,15 +107,18 @@ Rectangle {id:page1Container
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                image.height = image.height * 0.9
-                image.width = image.width * 0.9
-                point.y = point.y * 0.9
-                point.x = point.x * 0.9
+                image.height = image.height * (1 / 1.1)
+                image.width = image.width * (1 / 1.1)
+                point.y = point.y * (1 / 1.1)
+                point.x = point.x * (1 / 1.1)
+                // To make it zoom to the center of the view
+                flick.contentX -= (1 - 1 / 1.1) * (0.5 * flick.width + flick.contentX);
+                flick.contentY -= (1 - 1 / 1.1) * (0.5 * flick.height + flick.contentY);
             }
         }
     }
     Rectangle {
-        id: zoomOut;
+        id: zoomIn;
         x: 630;
         y: 70;
         width: 74
@@ -126,6 +136,9 @@ Rectangle {id:page1Container
                 image.width = image.width * 1.1
                 point.y = point.y * 1.1
                 point.x = point.x * 1.1
+                // To make it zoom to the center of the view
+                flick.contentX += 0.1 * (0.5 * flick.width + flick.contentX);
+                flick.contentY += 0.1 * (0.5 * flick.height + flick.contentY);
             }
         }
     }
@@ -149,10 +162,6 @@ Rectangle {id:page1Container
         text: "jjjj-mm-dd"
         inputMethodHints: Qt.ImhDate
         focus: false
-        onActiveFocusChanged: {
-            if (!from.activeFocus) from.closeSoftwareInputPanel();
-        }
-        Component.onCompleted: from.closeSoftwareInputPanel();
     }
     Text {
         id: textTo
@@ -173,10 +182,6 @@ Rectangle {id:page1Container
         text: "jjjj-mm-dd"
         inputMethodHints: Qt.ImhDate
         focus: false
-        onActiveFocusChanged: {
-            if (!to.activeFocus) to.closeSoftwareInputPanel();
-        }
-        Component.onCompleted: to.closeSoftwareInputPanel();
     }
 
     Button{
@@ -212,39 +217,24 @@ Rectangle {id:page1Container
         }
     }
 
-    //        Button{
-    //            id:buttonAdd
-    //            x: 450
-    //            y: 900
-    //            text: "Add Point"
-
-    //            onClicked: {
-    //                try {
-    //                    var object = Qt.createQmlObject("import QtQuick 2.0; Image {id: point2; property string text: 'Observation: Airport\ndate: 05-08-2014\nobserver: Bouke';
-    //    y: (1-(52.22373 - image.ymin) / (image.ymax - image.ymin)) * image.height;
-    //                x: (6.88340 - image.xmin) / (image.xmax - image.xmin) * image.width; signal rem();
-    //                source: 'marker_small.png'; MouseArea {anchors.fill: parent; onClicked: {flick.message(parent.text)}}}"// onRem:{parent.source='';console.log('removed')}
-    ////Component.onCompleted: flick.remo.connect(rem)}"
-    //                                                    , image.parent);
-    //                    markers.append({"code":object});
-    //                    flick.amount += 1;
-    //                } catch(err) {
-    //                    dialog.show('Error on line ' + err.qmlErrors[0].lineNumber + '\n' + err.qmlErrors[0].message);
-    //                }
-    //            }
-    //        }
-
     Item {
         Connections {
             target: currentobservation
             onAddPoint: {
                 try {
                     flick.amount += 1;
-                    var object = Qt.createQmlObject("import QtQuick 2.0; Image {id: observationMarker;
-                    property string text: 'Observation: " + observation + "\nDate: " + time + "\nObserver: " + observer + "';
-                    y: (1-(" + lat + " - image.ymin) / (image.ymax - image.ymin)) * image.height - 51;
-                    x: (" + lon + " - image.xmin) / (image.xmax - image.xmin) * image.width - 20;
-                    source: 'marker_small.png'; MouseArea {anchors.fill: parent; onClicked: {flick.message(parent.text)}}}",image.parent);
+                    if (newObservation)
+                        var object = Qt.createQmlObject("import QtQuick 2.0; Image {id: observationMarker;
+                        property string text: 'Observation: " + observation + "\nDate: " + time + "\nObserver: " + observer + "';
+                        y: (1-(" + lat + " - image.ymin) / (image.ymax - image.ymin)) * image.height - 51;
+                        x: (" + lon + " - image.xmin) / (image.xmax - image.xmin) * image.width - 20;
+                        source: 'here_small.png'; MouseArea {anchors.fill: parent; onClicked: {flick.message(parent.text)}}}",image.parent);
+                    else
+                        var object = Qt.createQmlObject("import QtQuick 2.0; Image {id: observationMarker;
+                        property string text: 'Observation: " + observation + "\nDate: " + time + "\nObserver: " + observer + "';
+                        y: (1-(" + lat + " - image.ymin) / (image.ymax - image.ymin)) * image.height - 51;
+                        x: (" + lon + " - image.xmin) / (image.xmax - image.xmin) * image.width - 20;
+                        source: 'marker_small.png'; MouseArea {anchors.fill: parent; onClicked: {flick.message(parent.text)}}}",image.parent);
                     markers.append({"code":object});
                 } catch(err) {
                     console.log('Error on line ' + err.qmlErrors[0].lineNumber + '\n' + err.qmlErrors[0].message);

@@ -1,3 +1,9 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This is the screen where the template is loaded in and which handles the recording of the observation
+
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
@@ -24,7 +30,6 @@ Rectangle {id:page1Container
             handlerLoader("mainMenu.qml")
         }
 
-        //Component.onCompleted: visible = true
     }
     MessageDialog {
         id: messageDialogGPS
@@ -39,7 +44,7 @@ Rectangle {id:page1Container
         height: 600
         Loader {
             id: myLoader
-            source:currentobservation.url; //file:///storage/emulated/0/Download/
+            source:currentobservation.url;
         }
 
     }
@@ -47,21 +52,9 @@ Rectangle {id:page1Container
     PositionSource {
         id: positionSource
         updateInterval: 1000
-        active: false
-
-        //        onPositionChanged: {
-        //            var coord = positionSource.position.coordinate;
-        //            console.log("Coordinate:", coord.longitude, coord.latitude);
-        //        }
+        active: true
     }
 
-    //    Text {
-    //        id: textCoordinates
-    //        x: 500
-    //        y: 700
-    //        text: qsTr(positionSource.position.coordinate.longitude + "\n" + positionSource.position.coordinate.latitude)
-    //        font.pixelSize: 25
-    //    }
 
     Text {
         id: textLat
@@ -80,7 +73,6 @@ Rectangle {id:page1Container
         width: 200
         height: 40
         font.pixelSize: 25
-        text: positionSource.position.coordinate.latitude
         inputMethodHints: Qt.ImhDigitsOnly
         MouseArea {
             id: latitudeMouseArea
@@ -114,7 +106,6 @@ Rectangle {id:page1Container
         width: 200
         height: 40
         font.pixelSize: 25
-        text: positionSource.position.coordinate.longitude
         inputMethodHints: Qt.ImhDigitsOnly
         MouseArea {
             id: longitudeMouseArea
@@ -124,22 +115,6 @@ Rectangle {id:page1Container
             onPressed: editmenu.popup()
         }
     }
-
-    //   Text {
-    //       id: textTimeNow
-    //       x: 500
-    //       y: 700
-    //       text: qsTr(Qt.formatDateTime(new Date(), "dd-MM-yy\nhh:mm:ss"))
-    //       font.pixelSize: 25
-    //   }
-
-    //   Text {
-    //       id: textTime
-    //       x: 100
-    //       y: 700
-    //       text: qsTr("Date/Time:")
-    //       font.pixelSize: 25
-    //   }
 
     Button{
         id:buttonCancel
@@ -188,10 +163,13 @@ Rectangle {id:page1Container
         text: "update location"
 
         onClicked: {
-            positionSource.update()
             latitude.text = positionSource.position.coordinate.latitude
             longitude.text = positionSource.position.coordinate.longitude
         }
+    }
+    Component.onCompleted: {
+        latitude.text = positionSource.position.coordinate.latitude
+        longitude.text = positionSource.position.coordinate.longitude
     }
 
 }

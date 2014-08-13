@@ -1,3 +1,9 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This is the main menu with four buttons.
+
 import QtQuick 2.0
 import QtQuick.Controls 1.1
 

@@ -1,3 +1,9 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This is the source file for the class Options which stores the global settings (server address, observer name and last used template).
+
 #include <QFile>
 #include <QDirIterator>
 #include <QTextStream>
@@ -7,16 +13,17 @@
 Options::Options(QObject *parent) :
     QObject(parent)
 {
+    /// standard values
     m_server = "http://130.89.222.201:8095/gatherer";
     m_observer = "henk";
     m_current = "not";
+
+    /// Check if there are saved settings
     QDirIterator dirIt("/data/data/org.qtproject.example.Gatherer/files/",QDirIterator::Subdirectories);
     while (dirIt.hasNext()) {
         dirIt.next();
         if (QFileInfo(dirIt.filePath()).isFile())
             if (QFileInfo(dirIt.filePath()).suffix() == "ini"){
-                qDebug()<<dirIt.filePath();
-
                 QString filename= dirIt.filePath();
                 QStringList folders = filename.split( "/" );
                 QStringList nameAndExt = folders[folders.length() - 1].split(".");
@@ -36,7 +43,6 @@ Options::Options(QObject *parent) :
                 }
             }
     }
-
 }
 
 
@@ -70,6 +76,7 @@ void Options::setCurrent(QString current)
     m_current = current;
 }
 
+/// Save the current settings to file
 void Options::save()
 {
     QString filename= "/data/data/org.qtproject.example.Gatherer/files/options.ini";

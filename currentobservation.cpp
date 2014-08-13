@@ -1,3 +1,10 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This is the source file for the class CurrentObservation which handles everything about the current observation(s).
+// Saving it, uploading it, deleting it, showing observations.
+
 #include "currentobservation.h"
 #include "dataobject.h"
 #include <QNetworkReply>
@@ -16,11 +23,14 @@ CurrentObservation::~CurrentObservation()
     delete nam;
 }
 
+/// To get the location of the current QML template
 QString CurrentObservation::url() const
 {
     return m_url;
 }
 
+/// To set the location of the current QML template
+/// It also reads if there is a basemap, if so the map will be set up
 void CurrentObservation::setUrl(const QString url)
 {
     m_url = url;
@@ -43,7 +53,6 @@ void CurrentObservation::setUrl(const QString url)
     file.close();
 
     QStringList metadata = content.split( "\n" );
-    QString name = metadata[0].trimmed();
 
     for (int i=1;i<metadata.length();i++){
         QStringList line = metadata[i].split("|");
@@ -71,136 +80,135 @@ void CurrentObservation::setUrl(const QString url)
                 }
             }
     }
-} // http://130.89.222.201:8080/geoserver/wms?
-//SERVICE=WMS&
-//REQUEST=GetMap&
-//VERSION=1.1&
-//LAYERS=cite:itc_false_color_stdev25_tif_60cm&
-//CRS=EPSG:32632&
-//STYLES=&
-//BBOX=355049.7,5787599.8,356050.5,5788280.3&
-//WIDTH=1668&
-//HEIGHT=1134&
-//FORMAT=image/png
+}
 
+/// To get the name of the current template
 QString CurrentObservation::name() const
 {
     return m_name;
 }
 
+/// To set the name of the current template
 void CurrentObservation::setName(const QString name)
 {
     m_name = name;
 }
 
+/// To get the time of the current observation
 QString CurrentObservation::time() const
 {
     return m_time;
 }
 
+/// To set the time of the current observation
 void CurrentObservation::setTime(const QString time)
 {
     m_time = time;
 }
 
+/// To get the coordinates of the current observation
 QString CurrentObservation::location() const
 {
     return m_location;
 }
 
+/// To set the coordinates of the current observation
 void CurrentObservation::setLocation(const QString location)
 {
     m_location = location;
 }
 
+/// To get the name of the observer of the current observation
 QString CurrentObservation::observer() const
 {
     return m_observer;
 }
 
+/// to set the name of the observer of the current observation
 void CurrentObservation::setObserver(const QString observer)
 {
     m_observer = observer;
 }
 
+/// To get the data fields of the current observation
 QString CurrentObservation::data() const
 {
     return m_data;
 }
 
+/// To set the data fields of the current observation
 void CurrentObservation::setData(const QString data)
 {
     m_data = data;
 }
 
+/// To get the server url of the current observation
 QString CurrentObservation::server() const
 {
     return m_server;
 }
 
+/// To set the server url of the current observation
 void CurrentObservation::setServer(const QString server)
 {
     m_server = server;
 }
 
+/// To get the response of the server after the last upload
 QString CurrentObservation::response() const
 {
     return m_response;
 }
 
+/// To get the location of the image of the map of the current observation
 QString CurrentObservation::map() const
 {
     return m_map;
 }
 
+/// To get the xmin of the map of the current template
 QString CurrentObservation::xmin() const
 {
     return m_xmin;
 }
 
+/// To get the xmax of the map of the current template
 QString CurrentObservation::xmax() const
 {
     return m_xmax;
 }
 
+/// To get the ymin of the map of the current template
 QString CurrentObservation::ymin() const
 {
     return m_ymin;
 }
 
+/// To get the ymax of the map of the current template
 QString CurrentObservation::ymax() const
 {
     return m_ymax;
 }
 
+/// To get the width of the map of the current template
 QString CurrentObservation::width() const
 {
     return m_width;
 }
 
+/// To get the height of the map of the current template
 QString CurrentObservation::height() const
 {
     return m_height;
 }
 
-void CurrentObservation::upload()
-{
-    if ( nam)
-        delete nam;
-
-    nam = new QNetworkAccessManager();
-    QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
-                     this, SLOT(finishedUploadSlot(QNetworkReply*)));
-    QString urlString = m_server + "?subjectobservation&location=" + m_location + "&time=" + m_time + "&subjectname=" + m_name + "&observer=" + m_observer + m_data;
-    qDebug() << urlString;
-    QUrl url(urlString);
-    nam->get(QNetworkRequest(url));
-}
-
+/// To upload the selected observation to the server.
 void CurrentObservation::upload(int i)
 {
     m_i = i;
-    QFile saveFile(filename);
+
+    /// Reading the saved observations
+    QFile saveFile(m_filename);
     bool ret = saveFile.open(QIODevice::ReadWrite | QIODevice::Text);
     QString content;
     if( ret )
@@ -211,6 +219,7 @@ void CurrentObservation::upload(int i)
     saveFile.close();
     QStringList observations = content.split("\n");
 
+    /// Uploading the selected observation
     if ( nam)
         delete nam;
 
@@ -224,9 +233,46 @@ void CurrentObservation::upload(int i)
 
 }
 
+/// The corresponding slot
+void CurrentObservation::finishedUploadiSlot(QNetworkReply *reply)
+{
+    QString replyContent = reply->readAll();
+    /// Saving the response
+    if (replyContent.length() > 100) { /// if succes
+        QStringList replyPieces = replyContent.split(">");
+        QStringList response = replyPieces[3].split("<");
+        m_response = response[0];
+        /// deleting the uploaded observation
+        QFile saveFile(m_filename);
+        bool ret = saveFile.open(QIODevice::ReadWrite | QIODevice::Text);
+        QString content;
+        if( ret )
+        {
+            QTextStream stream(&saveFile);
+            content = stream.readAll();
+        }
+        saveFile.close();
+        QStringList observations = content.split("\n");
+        QFile file(m_filename);
+        file.open(QIODevice::WriteOnly | QIODevice::Truncate);
+        QTextStream stream(&file);
+        for (int j = 0; j<observations.length()-1;j++){
+            if (m_i != j)
+                stream << observations[j] + "\n";
+        }
+        file.close();
+    }
+    else
+        m_response = "upload failed";
+
+    emit responseReady();
+}
+
+/// For saving the current observation
 void CurrentObservation::save()
 {
-    QFile saveFile(filename);
+    /// Opening the savefile
+    QFile saveFile(m_filename);
     bool ret = saveFile.open(QIODevice::ReadWrite | QIODevice::Text);
     QString content;
     if( ret )
@@ -234,17 +280,19 @@ void CurrentObservation::save()
         QString urlString = m_server + "?subjectobservation&location=" + m_location + "&time=" + m_time + "&subjectname=" + m_name + "&observer=" + m_observer + m_data + "\n";
         QTextStream stream(&saveFile);
         content = stream.readAll();
+        /// Adding the observation at the end
         stream << urlString;
     }
     saveFile.close();
 }
 
+/// For uploading all the saved observations
 void CurrentObservation::uploadSaved()
 {
     m_i = 0;
     m_response = "";
     m_failed.clear();
-    QFile saveFile(filename);
+    QFile saveFile(m_filename);
     bool ret = saveFile.open(QIODevice::ReadWrite | QIODevice::Text);
     QString content;
     if( ret )
@@ -269,9 +317,62 @@ void CurrentObservation::uploadSaved()
 
 }
 
+/// The corresponding slot
+void CurrentObservation::finishedUploadallSlot(QNetworkReply *reply)
+{
+    QString replyContent = reply->readAll();
+    /// Saving response
+    if (replyContent.length() > 100) {
+        QStringList replyPieces = replyContent.split(">");
+        QStringList response = replyPieces[3].split("<");
+        m_response += response[0] + "\n";
+    }
+    else {
+        m_response += "upload failed\n";
+        m_failed.append(m_i);
+    }
+    //qDebug()<<replyContent;
+    m_i++;
+    /// loading in observations
+    QFile saveFile(m_filename);
+    bool ret = saveFile.open(QIODevice::ReadWrite | QIODevice::Text);
+    QString content;
+    if( ret )
+    {
+        QTextStream stream(&saveFile);
+        content = stream.readAll();
+    }
+    saveFile.close();
+    QStringList observations = content.split("\n");
+
+    if (m_i == observations.length() - 1){ /// last observation already uploaded, delete succesfull uploaded observations
+        QFile file(m_filename);
+        file.open(QIODevice::WriteOnly | QIODevice::Truncate);
+        QTextStream stream(&file);
+        for (int j = 0; j<observations.length()-1;j++){
+            if (m_failed.contains(j))
+                stream << observations[j] + "\n";
+        }
+        file.close();
+        emit responseReady();
+    }
+    else { /// upload next observation
+        if ( nam)
+            delete nam;
+
+        nam = new QNetworkAccessManager();
+        QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
+                         this, SLOT(finishedUploadallSlot(QNetworkReply*)));
+        qDebug() << observations[m_i];
+        QUrl url(observations[m_i]);
+        nam->get(QNetworkRequest(url));
+    }
+}
+
+/// For loading in the saved observations for the listmodel
 void CurrentObservation::loadSaved()
 {
-    QFile saveFile(filename);
+    QFile saveFile(m_filename);
     bool ret = saveFile.open(QIODevice::ReadWrite | QIODevice::Text);
     QString content;
     if( ret )
@@ -283,7 +384,6 @@ void CurrentObservation::loadSaved()
     QStringList observations = content.split("\n");
     m_model.clear();
     for (int i = 0; i<observations.length()-1;i++){
-        //http://130.89.222.201:8095/gatherer?subjectobservation&location=POINT(51.9803661 5.6791265)&time=2014-07-28&subjectname=LanduseMapping&observer=henk&field1=Urban Fabric
         QStringList data= observations[i].split("&");
         QStringList time = data[2].split("=");
         QStringList subjectname = data[3].split("=");
@@ -292,9 +392,10 @@ void CurrentObservation::loadSaved()
     }
 }
 
+/// Deleting the selected observation
 void CurrentObservation::deleteObservation(int i)
 {
-    QFile saveFile(filename);
+    QFile saveFile(m_filename);
     bool ret = saveFile.open(QIODevice::ReadWrite | QIODevice::Text);
     QString content;
     if( ret )
@@ -304,7 +405,7 @@ void CurrentObservation::deleteObservation(int i)
     }
     saveFile.close();
     QStringList observations = content.split("\n");
-    QFile file(filename);
+    QFile file(m_filename);
     file.open(QIODevice::WriteOnly | QIODevice::Truncate);
     if( ret )
     {
@@ -317,6 +418,7 @@ void CurrentObservation::deleteObservation(int i)
     file.close();
 }
 
+/// Check if there is a map downloaded
 QString CurrentObservation::mapAvailable()
 {
     QStringList filename = m_map.split("//");
@@ -330,57 +432,18 @@ QString CurrentObservation::mapAvailable()
         return result;
 }
 
-void CurrentObservation::downloadObservations(QString from, QString to)
-{
-    if ( nam)
-        delete nam;
-
-    QString urlString = m_server + "?subjectquery=" + m_name + "&begintime=" + from + "&endtime=" + to + "&envelope=" + m_ymax + "," + m_xmin + "," + m_ymin + "," + m_xmax;
-
-
-    nam = new QNetworkAccessManager();
-    QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
-                     this, SLOT(finishedDownloadSlot(QNetworkReply*)));
-    QUrl url(urlString);
-    nam->get(QNetworkRequest(url));
-}
-
-void CurrentObservation::downloadObservations(QString from)
-{
-    if ( nam)
-        delete nam;
-
-    QString urlString = m_server + "?subjectquery=" + m_name + "&begintime=" + from + "&envelope=" + m_ymax + "," + m_xmin + "," + m_ymin + "," + m_xmax;
-
-
-    nam = new QNetworkAccessManager();
-    QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
-                     this, SLOT(finishedDownloadSlot(QNetworkReply*)));
-    QUrl url(urlString);
-    nam->get(QNetworkRequest(url));
-}
-
-void CurrentObservation::downloadObservations()
-{
-    if ( nam)
-        delete nam;
-
-    QString urlString = m_server + "?subjectquery=" + m_name + "&envelope=" + m_ymax + "," + m_xmin + "," + m_ymin + "," + m_xmax;
-
-
-    nam = new QNetworkAccessManager();
-    QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
-                     this, SLOT(finishedDownloadSlot(QNetworkReply*)));
-    QUrl url(urlString);
-    nam->get(QNetworkRequest(url));
-}
-
+/// To show the historical observations on the map.
 void CurrentObservation::showObservations(const QString from, const QString to)
 {
+    /// Parse xml file
     QString filename= "/data/data/org.qtproject.example.Gatherer/files/" + m_name + ".xml";
     QFile file( filename );
     QDateTime fromDate = QDateTime::fromString(from, "yyyy-MM-dd");
     QDateTime toDate = QDateTime::fromString(to, "yyyy-MM-dd");
+    QString time = "";
+    QString observation = "";
+    QString observer = "";
+    QStringList coords = {"",""};
     if ( file.open(QIODevice::ReadWrite) )
     {
         QXmlStreamReader xmlReader;
@@ -388,11 +451,6 @@ void CurrentObservation::showObservations(const QString from, const QString to)
         xmlReader.readNext();
         bool firstObservation = false;
         bool secondObservation = false;
-        //Reading from the file
-        QString time = "";
-        QString observation = "";
-        QString observer = "";
-        QStringList coords = {"",""};
         while (!xmlReader.atEnd())
         {
 
@@ -402,7 +460,6 @@ void CurrentObservation::showObservations(const QString from, const QString to)
                 //qDebug()<< "start-tag: " + name;
                 if (name == "Observation") {
                     if (firstObservation) {
-                        //secondObservation = true;
                         observation = xmlReader.readElementText();
                         //qDebug()<< observation;
                     }
@@ -416,15 +473,12 @@ void CurrentObservation::showObservations(const QString from, const QString to)
                 } else if (name == "TimeStamp") {
                     QString text = xmlReader.readElementText();
                     time = text.left(10);
-                    //qDebug()<< time;
                 } else if (name == "Observer") {
                     observer = xmlReader.readElementText();
-                    //qDebug()<< observer;
                 }
 
             } else if (xmlReader.isEndElement()) {
                 QString name = xmlReader.name().toString();
-                //qDebug()<< "end-tag: " + name;
                 if (name == "Observation")
                 {
                     if (secondObservation)
@@ -433,7 +487,7 @@ void CurrentObservation::showObservations(const QString from, const QString to)
                         firstObservation = false;
                         QDateTime timeDate = QDateTime::fromString(time, "yyyy-MM-dd");
                         if (timeDate <= toDate && timeDate >= fromDate)
-                            emit addPoint(coords[0].toDouble(), coords[1].toDouble(), observation, time, observer);
+                            emit addPoint(coords[0].toDouble(), coords[1].toDouble(), observation, time, observer, false);
                     }
                 }
             }
@@ -446,72 +500,30 @@ void CurrentObservation::showObservations(const QString from, const QString to)
             qDebug() << firstObservation + " " + secondObservation;
         }
     }
-}
 
-void CurrentObservation::finishedDownloadSlot(QNetworkReply *reply)
-{
-    const QString content = reply->readAll();
-
-    QXmlStreamReader xmlReader (content);
-    xmlReader.readNext();
-    bool firstObservation = false;
-    bool secondObservation = false;
-    //Reading from the file
-    QString time = "";
-    QString observation = "";
-    QString observer = "";
-    QStringList coords = {"",""};
-    while (!xmlReader.atEnd())
+    /// Parse new observations
+    QFile saveFile(m_filename);
+    bool ret = saveFile.open(QIODevice::ReadWrite | QIODevice::Text);
+    QString content;
+    if( ret )
     {
+        QTextStream stream(&saveFile);
+        content = stream.readAll();
 
-        if (xmlReader.isStartElement())
-        {
-            QString name = xmlReader.name().toString();
-            //qDebug()<< "start-tag: " + name;
-            if (name == "Observation") {
-                if (firstObservation) {
-                    //secondObservation = true;
-                    observation = xmlReader.readElementText();
-                    //qDebug()<< observation;
-                }
-                else
-                    firstObservation = true;
-
-            } else if (name == "Location") {
-                QString text = xmlReader.readElementText();
-                QString coord = text.mid(6, text.length() - 7);
+        saveFile.close();
+        QStringList observations = content.split("\n");
+        if (observations[0].startsWith("http"))
+            for (int i = 0; i<observations.length()-1;i++){
+                QStringList data= observations[i].split("&");
+                QStringList coordData = data[1].split("=");
+                QString coord = coordData[1].mid(6, coordData[1].length() - 7);
                 coords = coord.split(" ");
-            } else if (name == "TimeStamp") {
-                QString text = xmlReader.readElementText();
-                time = text.left(10);
-                //qDebug()<< time;
-            } else if (name == "Observer") {
-                observer = xmlReader.readElementText();
-                //qDebug()<< observer;
+                QStringList timeList = data[2].split("=");
+                QStringList observerList = data[4].split("=");
+                QStringList input = data[5].split("=");
+                emit addPoint(coords[0].toDouble(), coords[1].toDouble(), input[1], timeList[1], observerList[1], true);
             }
-
-        } else if (xmlReader.isEndElement()) {
-            QString name = xmlReader.name().toString();
-            //qDebug()<< "end-tag: " + name;
-            if (name == "Observation")
-            {
-                if (secondObservation)
-                    secondObservation = false;
-                else {
-                    firstObservation = false;
-                    emit addPoint(coords[0].toDouble(), coords[1].toDouble(), observation, time, observer);
-                }
-            }
-        }
-        xmlReader.readNext();
-
     }
-    if (xmlReader.hasError())
-    {
-        qDebug() << "XML error: " << xmlReader.errorString();
-        qDebug() << firstObservation + " " + secondObservation;
-    }
-
 }
 
 
@@ -520,98 +532,5 @@ QQmlListProperty<DataObject> CurrentObservation::model()
     return QQmlListProperty<DataObject>(this,m_model);
 }
 
-void CurrentObservation::finishedUploadSlot(QNetworkReply *reply)
-{
-    QString content = reply->readAll();
-    //QStringList subjects = content.split( ";" );
-    qDebug()<<content;
-    //    m_subjects.clear();
 
-    //    for (int i=0;i<subjects.length();i++){
-    //        m_subjects.append(new DataObject(subjects[i], ""));
-    //    }
-    //    responseReady();
-}
-
-void CurrentObservation::finishedUploadiSlot(QNetworkReply *reply)
-{
-    QString replyContent = reply->readAll();
-    if (replyContent.length() > 100) {
-        QStringList replyPieces = replyContent.split(">");
-        QStringList response = replyPieces[3].split("<");
-        m_response = response[0];
-        qDebug()<<replyContent;
-        QFile saveFile(filename);
-        bool ret = saveFile.open(QIODevice::ReadWrite | QIODevice::Text);
-        QString content;
-        if( ret )
-        {
-            QTextStream stream(&saveFile);
-            content = stream.readAll();
-        }
-        saveFile.close();
-        QStringList observations = content.split("\n");
-        QFile file(filename);
-        file.open(QIODevice::WriteOnly | QIODevice::Truncate);
-        QTextStream stream(&file);
-        for (int j = 0; j<observations.length()-1;j++){
-            if (m_i != j)
-                stream << observations[j] + "\n";
-        }
-        file.close();
-    }
-    else
-        m_response = "upload failed";
-
-    emit responseReady();
-}
-
-void CurrentObservation::finishedUploadallSlot(QNetworkReply *reply)
-{
-    QString replyContent = reply->readAll();
-    if (replyContent.length() > 100) {
-        QStringList replyPieces = replyContent.split(">");
-        QStringList response = replyPieces[3].split("<");
-        m_response += response[0] + "\n";
-    }
-    else {
-        m_response += "upload failed\n";
-        m_failed.append(m_i);
-    }
-    qDebug()<<replyContent;
-    m_i++;
-    QFile saveFile(filename);
-    bool ret = saveFile.open(QIODevice::ReadWrite | QIODevice::Text);
-    QString content;
-    if( ret )
-    {
-        QTextStream stream(&saveFile);
-        content = stream.readAll();
-    }
-    saveFile.close();
-    QStringList observations = content.split("\n");
-
-    if (m_i == observations.length() - 1){
-        QFile file(filename);
-        file.open(QIODevice::WriteOnly | QIODevice::Truncate);
-        QTextStream stream(&file);
-        for (int j = 0; j<observations.length()-1;j++){
-            if (m_failed.contains(j))
-                stream << observations[j] + "\n";
-        }
-        file.close();
-        emit responseReady();
-    }
-    else {
-        if ( nam)
-            delete nam;
-
-        nam = new QNetworkAccessManager();
-        QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
-                         this, SLOT(finishedUploadallSlot(QNetworkReply*)));
-        qDebug() << observations[m_i];
-        QUrl url(observations[m_i]);
-        nam->get(QNetworkRequest(url));
-    }
-}
 

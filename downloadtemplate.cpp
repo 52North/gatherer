@@ -1,3 +1,9 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This is the source file for the class DownloadTemplate which handles everything about downloading templates, the basemap, historical observations and stores them.
+
 #include "downloadtemplate.h"
 #include <QTextStream>
 #include <QFile>
@@ -9,14 +15,16 @@
 #include <QQmlListProperty>
 #include <QList>
 
+/// Constructor searches if there are already locally saved templates
 DownloadTemplate::DownloadTemplate(QObject *parent) :
     QObject(parent)
 {
-    // for testing
-    m_model.append(new DataObject("test", "file:///storage/emulated/0/Download/Template_LandUseMapping.qml"));
-    m_urls.append("file:///storage/emulated/0/Download/Template_LandUseMapping.qml");
+    /// for testing
+    //m_model.append(new DataObject("test", "file:///storage/emulated/0/Download/Template_LandUseMapping.qml"));
+    //m_urls.append("file:///storage/emulated/0/Download/Template_LandUseMapping.qml");
 
-    // normal
+    /// normal
+    /// Reading the names from the namefile which correspond with the names of the template-files
     QString filenameNames= "/data/data/org.qtproject.example.Gatherer/files/names.txt";
     QFile fileNames( filenameNames );
     QString content;
@@ -33,6 +41,7 @@ DownloadTemplate::DownloadTemplate(QObject *parent) :
             m_templateNames.insert(myTemplate[0], myTemplate[1]);
         }
     }
+    /// Finding the template files
     QDirIterator dirIt("/data/data/org.qtproject.example.Gatherer/files/",QDirIterator::Subdirectories);
     while (dirIt.hasNext()) {
         dirIt.next();
@@ -58,9 +67,10 @@ DownloadTemplate::~DownloadTemplate()
     delete nam;
 }
 
+/// For testing, download file from downloads folder
 void DownloadTemplate::download(const QString &templateName)
 {
-    QDirIterator dirIt2(templateName,QDirIterator::Subdirectories); // "/storage/emulated/0/Download/"
+    QDirIterator dirIt2(templateName,QDirIterator::Subdirectories);
     while (dirIt2.hasNext()) {
         dirIt2.next();
         if (QFileInfo(dirIt2.filePath()).isFile())
@@ -74,7 +84,6 @@ void DownloadTemplate::download(const QString &templateName)
                     QTextStream stream(&xmlString);
                     QString content = stream.readAll();
                     QStringList pieces = content.split( "[-- end metadata --]" );
-                    //qDebug()<<pieces[1];
 
                     QStringList metadata = pieces[0].split( "\n" );
                     QString name = metadata[0];
@@ -96,6 +105,13 @@ void DownloadTemplate::download(const QString &templateName)
     }
 }
 
+/// For the templates list
+QQmlListProperty<DataObject> DownloadTemplate::model()
+{
+    return QQmlListProperty<DataObject>(this,m_model);
+}
+
+/// To download a template from the server
 void DownloadTemplate::downloadFromUrl(const QString & server, const QString &templateName)
 {
     m_templateName = templateName;
@@ -109,22 +125,17 @@ void DownloadTemplate::downloadFromUrl(const QString & server, const QString &te
     nam->get(QNetworkRequest(url));
 }
 
-QQmlListProperty<DataObject> DownloadTemplate::model()
-{
-    return QQmlListProperty<DataObject>(this,m_model);
-}
-
+/// The corresponding finished slot
 void DownloadTemplate::finishedSlot(QNetworkReply *reply)
 {
     QString content = reply->readAll();
     QStringList pieces = content.split( "[-- end metadata --]" );
-    //qDebug()<<pieces[1];
 
     QStringList metadata = pieces[0].split( "\n" );
     QString name = metadata[0].trimmed();
 
+    /// check if there is a basemap
     bool mapAvailable = false;
-
     for (int i=1;i<metadata.length();i++){
         QStringList line = metadata[i].split("|");
         if (line.length() > 2)
@@ -134,6 +145,7 @@ void DownloadTemplate::finishedSlot(QNetworkReply *reply)
             }
     }
 
+    /// saving metadata
     QString filename= "/data/data/org.qtproject.example.Gatherer/files/" + m_templateName + ".gatherer";
     QFile file( filename );
     if ( file.open(QIODevice::ReadWrite) )
@@ -143,6 +155,7 @@ void DownloadTemplate::finishedSlot(QNetworkReply *reply)
     }
     file.close();
 
+    /// saving qml template
     filename= "/data/data/org.qtproject.example.Gatherer/files/" + m_templateName + ".qml";
     QFile file2( filename );
     if ( file2.open(QIODevice::ReadWrite) )
@@ -152,6 +165,7 @@ void DownloadTemplate::finishedSlot(QNetworkReply *reply)
     }
     file2.close();
 
+    /// saving name with spaces
     if (!m_templateNames.contains(m_templateName)){
         m_templateNames.insert(m_templateName, name);
         QString filenameNames= "/data/data/org.qtproject.example.Gatherer/files/names.txt";
@@ -166,12 +180,15 @@ void DownloadTemplate::finishedSlot(QNetworkReply *reply)
     }
     m_model.append(new DataObject(name, "file://" + filename));
     m_urls.append("file://" + filename);
+
+    /// response to qml
     if (mapAvailable)
         emit downloadMap();
     else
         emit downloadObservationsSig();
 }
 
+/// To get the available templates on the server
 void DownloadTemplate::getSubjectList(const QString & server)
 {
     if ( nam)
@@ -191,34 +208,37 @@ void DownloadTemplate::finishedSubjectListSlot(QNetworkReply *reply)
     m_subjects.clear();
 
     for (int i=0;i<m_subjectslist.length();i++){
-        //qDebug()<<m_subjectslist[i];
         m_subjects.append(new DataObject(m_subjectslist[i], ""));
     }
-    responseReady();
+    emit responseReady();
 }
 
+/// For the list of available templates
 QQmlListProperty<DataObject> DownloadTemplate::subjectsModel()
 {
     return QQmlListProperty<DataObject>(this,m_subjects);
 }
 
+/// to link template name with and without spaces
 QString DownloadTemplate::templateName(const QString &name) const
 {
     return m_templateNames[name];
 }
 
+/// to get the selected url of the template
 QString DownloadTemplate::getUrl(const int & i) const
 {
-    //    DataObject test1 = new DataObject();
-    //    const DataObject test = m_model.value(i, test1);
     return m_urls[i];
 }
 
+/// to get the name of the selected template to download
 QString DownloadTemplate::getSubject(const int & i) const
 {
     return m_subjectslist[i];
 }
 
+
+/// For downloading the basemap of the template if there is one
 void DownloadTemplate::getMap()
 {
     if ( nam)
@@ -231,7 +251,7 @@ void DownloadTemplate::getMap()
     nam->get(QNetworkRequest(url));
 }
 
-
+/// The corresponding slot
 void DownloadTemplate::finishedMapSlot(QNetworkReply *reply)
 {
    QImage* img = new QImage();
@@ -244,7 +264,7 @@ void DownloadTemplate::finishedMapSlot(QNetworkReply *reply)
     emit downloadObservationsSig();
 }
 
-// for testing
+/// for testing
 void DownloadTemplate::getMaps()
 {
     qDebug() <<"aangeroepen";
@@ -258,7 +278,7 @@ void DownloadTemplate::getMaps()
     nam->get(QNetworkRequest(url));
 }
 
-// for testing
+/// for testing
 void DownloadTemplate::finishedMapSlots(QNetworkReply *reply)
 {
    qDebug() <<"ontvangen";
@@ -272,13 +292,13 @@ void DownloadTemplate::finishedMapSlots(QNetworkReply *reply)
     qDebug() <<"gesaved";
 }
 
+/// For downloading the historical observations of a template
 void DownloadTemplate::downloadObservations(const QString &server)
 {
     if ( nam)
         delete nam;
 
     QString urlString = server + "?subjectquery=" + m_templateName;
-
 
     nam = new QNetworkAccessManager();
     QObject::connect(nam, SIGNAL(finished(QNetworkReply*)),
@@ -287,6 +307,7 @@ void DownloadTemplate::downloadObservations(const QString &server)
     nam->get(QNetworkRequest(url));
 }
 
+/// The corresponding slot to save them as xml
 void DownloadTemplate::finishedObservationsSlot(QNetworkReply *reply)
 {
     QString content = reply->readAll();

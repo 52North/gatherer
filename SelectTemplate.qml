@@ -1,3 +1,9 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This shows the list of local templates and makes it possible to start one.
+
 import QtQuick 2.0
 import QtQuick.Controls 1.1
 import DataObject 1.0
@@ -16,7 +22,6 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         font.pointSize: 25
     }
-
 
     Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -37,7 +42,7 @@ Rectangle {
                 movable: false
             }
             TableViewColumn {
-                role: "color"
+                role: "url"
                 title: "url"
                 width: 0
                 resizable: false
@@ -53,9 +58,6 @@ Rectangle {
         text: "Open"
 
         onClicked: {
-            //console.log(tableview.currentRow)
-            //console.log(downloadtemplate.getUrl(tableview.currentRow))
-            busyIndicator.running = true;
             options.current = downloadtemplate.getUrl(tableview.currentRow);
             options.save();
             currentobservation.url = downloadtemplate.getUrl(tableview.currentRow);
@@ -73,13 +75,5 @@ Rectangle {
             handlerLoader("mainMenu.qml")
         }
 
-    }
-
-    BusyIndicator {
-        id: busyIndicator
-        anchors.verticalCenterOffset: -88
-        running: false
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
     }
 }

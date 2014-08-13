@@ -1,3 +1,9 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This is the main source file. It sets up the gui (QML) application and initiates the c++ classes which are connected to the QML context.
+
 #include <QtQuick/QQuickView>
 #include <QApplication>
 #include <QtQml>
@@ -11,7 +17,6 @@
 #include "qtquickcontrolsapplication.h"
 #include <QtQml/QQmlApplicationEngine>
 
-#include "message.h"
 #include "dataobject.h"
 #include "downloadtemplate.h"
 #include "currentobservation.h"
@@ -20,24 +25,13 @@
 
 int main(int argc, char *argv[])
 {
-    //QGuiApplication app(argc, argv);
-
-    /*qmlRegisterType<Message>("Messages", 1, 0, "Message");
-
-    QQuickView view;
-    view.setResizeMode(QQuickView::SizeRootObjectToView);
-    view.setSource(QUrl("qrc:///main.qml"));
-    view.show();
-*/
-
+    /// Making a QML application
     QtQuickControlsApplication app(argc, argv);
     QQmlApplicationEngine engine(QUrl("qrc:/main.qml"));
 
+    //qDebug() << QDir::currentPath();
 
-    qDebug() << QDir::currentPath();
-
-    //QQuickView view;
-   // view.setResizeMode(QQuickView::SizeRootObjectToView);
+    /// Connecting the c++ classes to the QML context
     QQmlContext *ctxt = engine.rootContext();
     qmlRegisterType<DownloadTemplate>("DownloadTemplate",1,0,"DownloadTemplate");
     qmlRegisterType<CurrentObservation>("CurrentObservation",1,0,"CurrentObservation");
@@ -50,12 +44,6 @@ int main(int argc, char *argv[])
     ctxt->setContextProperty("currentobservation", &currentObservation);
     ctxt->setContextProperty("options", &options);
 
-//downloadTemplate.getMaps();
-
-    //view.setSource(QUrl("qrc:main.qml"));
-    //view.show();
-
-    //engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
     return app.exec();
 }
 

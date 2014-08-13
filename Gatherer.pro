@@ -3,7 +3,7 @@ TEMPLATE = app
 QT += qml quick widgets positioning network
 QT += quick
 
-HEADERS += message.h \
+HEADERS += \
     dataobject.h \
     downloadtemplate.h \
     qtquickcontrolsapplication.h \

@@ -1,3 +1,4 @@
+//whole file is for testing, it is not used in the application.
 import QtQuick 2.0
 import QtQuick.Controls 1.1
 import DownloadTemplate 1.0

@@ -1,3 +1,9 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This is the header file for the class Options which stores the global settings (server address, observer name and last used template).
+
 #ifndef OPTIONS_H
 #define OPTIONS_H
 

@@ -1,3 +1,9 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This is the gui component to download a template from a server.
+
 import QtQuick 2.0
 import QtQuick.Controls 1.1
 import QtQuick.Dialogs 1.1
@@ -10,6 +16,7 @@ Rectangle {
     color: "#d4d4d4"
     signal handlerLoader(string name)
 
+    // to receive signals from downloadtemplate object
     Item {
          Connections {
              target: downloadtemplate
@@ -98,7 +105,7 @@ Rectangle {
                 movable: false
             }
             TableViewColumn {
-                role: "color"
+                role: "url"
                 title: "url"
                 width: 0
                 resizable: false

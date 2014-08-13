@@ -1,3 +1,10 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This is the header file for the class CurrentObservation which handles everything about the current observation(s).
+// Saving it, uploading it, deleting it, showing observations.
+
 #ifndef CURRENTOBSERVATION_H
 #define CURRENTOBSERVATION_H
 
@@ -67,16 +74,12 @@ public:
     QString height() const;
     Q_PROPERTY(QString height READ height CONSTANT)
 
-    Q_INVOKABLE void upload();
     Q_INVOKABLE void upload(int i);
     Q_INVOKABLE void save();
     Q_INVOKABLE void uploadSaved();
     Q_INVOKABLE void loadSaved();
     Q_INVOKABLE void deleteObservation(int i);
     Q_INVOKABLE QString mapAvailable();
-    Q_INVOKABLE void downloadObservations(QString from, QString to);
-    Q_INVOKABLE void downloadObservations(QString from);
-    Q_INVOKABLE void downloadObservations();
     Q_INVOKABLE void showObservations(const QString from, const QString to);
 
     QQmlListProperty<DataObject> model();
@@ -84,7 +87,7 @@ public:
 
 signals:
     void responseReady();
-    void addPoint(double lat, double lon, QString observation, QString time, QString observer);
+    void addPoint(double lat, double lon, QString observation, QString time, QString observer, bool newObservation);
     void urlChanged();
     void nameChanged();
     void timeChanged();
@@ -94,10 +97,8 @@ signals:
     void serverChanged();
 
 public slots:
-    void finishedUploadSlot(QNetworkReply * reply);
     void finishedUploadiSlot(QNetworkReply * reply);
     void finishedUploadallSlot(QNetworkReply * reply);
-    void finishedDownloadSlot(QNetworkReply * reply);
 
 private:
     QList<DataObject *> m_model;
@@ -118,7 +119,7 @@ private:
     QString m_height;
     QString m_width;
     QNetworkAccessManager* nam = 0;
-    QString filename = "/data/data/org.qtproject.example.Gatherer/files/savedObservations.txt";//"/storage/emulated/0/Download/savedObservations.txt";
+    QString m_filename = "/data/data/org.qtproject.example.Gatherer/files/savedObservations.txt";//"/storage/emulated/0/Download/savedObservations.txt";
     int m_i;
     QList <int> m_failed;
 

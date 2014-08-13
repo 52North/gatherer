@@ -1,3 +1,9 @@
+// Author: B.P. Ottow
+// Date: August 2014
+// GSoC Project: Gatherer, ILWIS Mobile. Hosted by 52 North and ITC Enschede.
+//
+// This is the start of an observation, it has one or two tabs. Record observation and map.
+
 import QtQuick 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
@@ -17,7 +23,6 @@ Rectangle {id:page1Container
 
     TabView {
         id:frame
-        //enabled: enabledCheck.checked
         tabPosition: controlPage.item ? controlPage.item.tabPosition : Qt.TopEdge
         anchors.fill: parent
         anchors.margins: 2
@@ -27,9 +32,7 @@ Rectangle {id:page1Container
             title: "Observation"
             active: true
             Observation { }
-            //            Component.onCompleted: {
-            //                frame.moveTab(0,1)
-            //            }
+
             Component.onCompleted: {
                 if (currentobservation.mapAvailable() === "true"){
                     frame.addTab("Map", Qt.createComponent("Map.qml"))
