@@ -82,7 +82,7 @@ Rectangle {id:page1Container
             property string text: "No GPS signal"
             y: image.ymin
             x: image.xmin
-            source: "here_small.png"
+            source: "hereblue_small.png"
             MouseArea {
                 anchors.fill: parent;
                 onClicked: {
@@ -228,13 +228,13 @@ Rectangle {id:page1Container
                         property string text: 'Observation: " + observation + "\nDate: " + time + "\nObserver: " + observer + "';
                         y: (1-(" + lat + " - image.ymin) / (image.ymax - image.ymin)) * image.height - 51;
                         x: (" + lon + " - image.xmin) / (image.xmax - image.xmin) * image.width - 20;
-                        source: 'here_small.png'; MouseArea {anchors.fill: parent; onClicked: {flick.message(parent.text)}}}",image.parent);
+                        source: 'markerblue_small.png'; MouseArea {anchors.fill: parent; onClicked: {flick.message(parent.text)}}}",image.parent);
                     else
                         var object = Qt.createQmlObject("import QtQuick 2.0; Image {id: observationMarker;
                         property string text: 'Observation: " + observation + "\nDate: " + time + "\nObserver: " + observer + "';
                         y: (1-(" + lat + " - image.ymin) / (image.ymax - image.ymin)) * image.height - 51;
                         x: (" + lon + " - image.xmin) / (image.xmax - image.xmin) * image.width - 20;
-                        source: 'marker_small.png'; MouseArea {anchors.fill: parent; onClicked: {flick.message(parent.text)}}}",image.parent);
+                        source: 'markergreen_small.png'; MouseArea {anchors.fill: parent; onClicked: {flick.message(parent.text)}}}",image.parent);
                     markers.append({"code":object});
                 } catch(err) {
                     console.log('Error on line ' + err.qmlErrors[0].lineNumber + '\n' + err.qmlErrors[0].message);

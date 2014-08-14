@@ -16,7 +16,9 @@
         <file>Map.qml</file>
         <file>Zoom-in-icon.png</file>
         <file>Zoom-out-icon.png</file>
-        <file>here_small.png</file>
-        <file>marker_small.png</file>
+        <file>hereblue_small.png</file>
+        <file>heregreen_small.png</file>
+        <file>markerblue_small.png</file>
+        <file>markergreen_small.png</file>
     </qresource>
 </RCC>
