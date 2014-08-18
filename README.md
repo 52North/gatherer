@@ -3,6 +3,7 @@ Gatherer app
 
 This application is made during the Google Summer of Code (GSoC) 2014.
 The app is designed for android and currently only for a Nexus 4 (768 x 1280 pixels).
+The (technical) documentation can be found in the wiki.
 
 Project info
 ============================
@@ -12,9 +13,6 @@ This project has three blogposts:
 * End of GSoC: ... (follows soon)
 
 The app needs a server to provide the templates an other data. The server code can be foud here: https://github.com/52North/IlwisConnectors/tree/master/gatherer
-
-The technical documentation of the application:
-... (follows soon)
 
 There is a screencast of the app on youtube:
 https://www.youtube.com/watch?v=spc_dXwLOWw
