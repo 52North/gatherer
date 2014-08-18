@@ -1,8 +1,10 @@
 Gatherer app
 ============================
 
-This application is made during the Google Summer of Code (GSoC) 2014.
+This application is made during the Google Summer of Code (GSoC) 2014. It can be used to gather information following a certain template. These templates are stored on a server. The observations can be shown on a map, saved locally and uploaded to the server again.
+
 The app is designed for android and currently only for a Nexus 4 (768 x 1280 pixels).
+
 The (technical) documentation can be found in the wiki.
 
 Project info
@@ -51,3 +53,5 @@ And QML:
 - QtPositioning 5.2
 - QtQuick.Controls.Styles 1.1
 - QtQuick.Layouts 1.1
+
+For details see the LICENSE file.
