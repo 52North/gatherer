@@ -10,7 +10,6 @@
 #include <QObject>
 #include <QQmlListProperty>
 #include <QNetworkAccessManager>
-#include <QVariantList>
 
 class DataObject;
 class QNetworkReply;
