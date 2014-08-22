@@ -12,7 +12,7 @@ Project info
 This project has three blogposts:
 * Startup of GSoC: http://blog.52north.org/2014/05/28/ilwis-mobile-app/
 * Mid-term of GSoC: http://blog.52north.org/2014/07/03/ilwis-mobile-midterm-blog/
-* End of GSoC: ... (follows soon)
+* End of GSoC: http://blog.52north.org/2014/08/22/ilwis-mobile-final-blog/
 
 The app needs a server to provide the templates an other data. The server code can be foud here: https://github.com/52North/IlwisConnectors/tree/master/gatherer
 
